@@ -110,6 +110,16 @@
             -webkit-mask-image: linear-gradient(to left, transparent 10%, black 80%);
             mask-image: linear-gradient(to left, transparent 10%, black 80%);
         }
+
+        /* ANIMASI SPLASH SCREEN */
+        @keyframes slideUpFade {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
     </style>
 </head>
 <body class="bg-gray-200 flex items-center justify-center min-h-screen font-sans antialiased text-slate-800" x-data="appData()">
@@ -133,16 +143,39 @@
             </div>
         </div>
 
+        <!-- SPLASH SCREEN ANIMASI -->
+        <div x-show="role === null && authScreen === 'splash'" 
+             x-transition:leave="transition ease-in-out duration-700"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-110"
+             class="flex-1 bg-white flex flex-col items-center justify-center relative w-full h-full z-[80] absolute inset-0">
+            
+            <!-- Background Glow -->
+            <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-100 rounded-full blur-[80px] opacity-60"></div>
+            </div>
+
+            <!-- Logo Animasi -->
+            <div class="flex flex-col items-center animate-[pulse-slow_2s_ease-in-out_infinite] relative z-10">
+                <img src="https://www.image2url.com/r2/default/images/1777297553010-973486f3-6e11-4755-9969-7fb56ffbb05d.png" alt="IdeaVest Logo" class="w-32 h-auto object-contain mb-4 drop-shadow-xl">
+                <h1 class="text-4xl font-extrabold text-brand-blue tracking-tight">IdeaVest</h1>
+            </div>
+
+            <!-- Teks Developed By Animasi -->
+            <div class="absolute bottom-12 flex flex-col items-center animate-[slideUpFade_1.2s_ease-in-out_0.5s_both] w-full z-10">
+                <p class="text-slate-400 text-[9px] font-bold tracking-[0.2em] uppercase mb-2">Developed by</p>
+                <div class="bg-brand-blue text-brand-yellow px-5 py-2 rounded-full font-black text-xs tracking-wider shadow-lg border border-slate-100/20">
+                    DARDERDOR Team
+                </div>
+            </div>
+        </div>
+
         <div x-show="role === null && authScreen === 'landing'" x-transition.opacity class="flex-1 bg-brand-light flex flex-col relative w-full h-full tab-content">
             <div class="absolute top-0 right-0 w-72 h-72 bg-blue-100 rounded-full blur-3xl -translate-y-1/3 translate-x-1/3 opacity-50"></div>
             
             <div class="px-6 pt-20 pb-8 flex flex-col items-center h-full">
                 <div class="flex items-center mb-1">
-                    <svg class="w-12 h-12 mr-2 text-brand-blue" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2L2 22h20L12 2zm0 3.8l6.3 12.6H5.7L12 5.8z"/>
-                        <path class="text-brand-yellow" d="M12 10l-3 6h6l-3-6z"/>
-                        <circle cx="6" cy="6" r="1.5" fill="#FFC107"/>
-                    </svg>
+                    <img src="https://www.image2url.com/r2/default/images/1777297553010-973486f3-6e11-4755-9969-7fb56ffbb05d.png" alt="IdeaVest Logo" class="w-12 h-auto mr-2 object-contain drop-shadow-sm">
                     <h1 class="text-3xl font-extrabold text-brand-blue tracking-tight">IdeaVest</h1>
                 </div>
                 <p class="text-brand-blue font-medium text-sm mb-10">Bridge Ideas. Build Impact.</p>
@@ -1020,10 +1053,9 @@
                         <div class="flex justify-between items-center mb-6">
                             <div>
                                 <h1 class="text-white text-xl font-extrabold flex items-center tracking-tight">
-                                    <svg class="w-6 h-6 mr-1.5" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M12 2L2 22h20L12 2zm0 3.8l6.3 12.6H5.7L12 5.8z"/>
-                                        <path class="text-brand-yellow" d="M12 10l-3 6h6l-3-6z"/>
-                                    </svg>
+                                    <div class="bg-white/10 p-1 rounded-lg mr-2 backdrop-blur-sm border border-white/20">
+                                        <img src="https://www.image2url.com/r2/default/images/1777297553010-973486f3-6e11-4755-9969-7fb56ffbb05d.png" alt="IdeaVest Logo" class="w-5 h-auto object-contain">
+                                    </div>
                                     IdeaVest
                                 </h1>
                                 <p class="text-blue-200 text-xs mt-1 font-medium">Halo, PT Agro Inovasi</p>
@@ -1744,7 +1776,7 @@
         document.addEventListener('alpine:init', () => {
             Alpine.data('appData', () => ({
                 role: null, // null, 'mahasiswa', 'company'
-                authScreen: 'landing', // 'landing', 'login_mhs', 'login_comp'
+                authScreen: 'splash', // 'splash', 'landing', 'login_mhs', 'login_comp'
                 
                 // Mahasiswa State
                 activeNavMhs: 'beranda', // beranda, ide_saya, pipeline_list, inbox, profil
@@ -1760,6 +1792,15 @@
 
                 // Toast Notification System
                 toast: { show: false, message: '', type: 'success' },
+
+                init() {
+                    // Timer untuk Splash Screen Transisi ke Landing
+                    if(this.authScreen === 'splash') {
+                        setTimeout(() => {
+                            this.authScreen = 'landing';
+                        }, 3500); // Tampil selama 3.5 detik
+                    }
+                },
 
                 showToast(message, type = 'success') {
                     this.toast.message = message;
@@ -1791,6 +1832,7 @@
 
                 // UI Helpers
                 get isDarkHeader() {
+                    if (this.role === null && this.authScreen === 'splash') return false; 
                     if (this.role === null && this.authScreen === 'landing') return false; 
                     if (this.role === null && this.authScreen === 'login_comp') return false; // Putih untuk header comp login
                     if (this.role === null && this.authScreen === 'login_mhs') return true; // Biru untuk header mhs login
