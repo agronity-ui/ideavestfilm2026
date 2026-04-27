@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>IdeaVest - Bridge Ideas. Build Impact.</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            blue: '#0E2A47',     // Dark Navy from design
+                            blueLight: '#1A365D',
+                            yellow: '#FFC107',   // Vibrant Yellow
+                            yellowHover: '#FFB300',
+                            light: '#F8FAFC',    // App background
+                            gray: '#64748B',     // Muted text
+                            border: '#E2E8F0',
+                            green: '#10B981',    // Success/Match
+                            red: '#EF4444'       // Badges
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'card': '0 8px 16px -4px rgba(0, 0, 0, 0.05)',
+                        'floating': '0 -4px 20px rgba(0, 0, 0, 0.08)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <style>
+        /* Hide Scrollbar but keep functionality */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Alpine Transitions */
+        [x-cloak] { display: none !important; }
+
+        /* Custom Range Slider for Bounty */
+        input[type=range].custom-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range].custom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 4px solid #FFC107;
+            cursor: pointer;
+            margin-top: -10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        input[type=range].custom-slider::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #E2E8F0;
+            border-radius: 2px;
+        }
+        input[type=range].custom-slider:focus {
+            outline: none;
+        }
+
+        /* SVG Animations */
+        .draw-circle {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: draw 1.5s ease-out forwards;
+        }
+        @keyframes draw { to { stroke-dashoffset: 8; } } /* 92% fill */
+
+        /* Smooth tab transitions */
+        .tab-content {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* PERBAIKAN: Image Masking Styles */
+        .mask-image-gradient {
+            -webkit-mask-image: linear-gradient(to top, transparent 10%, black 80%);
+            mask-image: linear-gradient(to top, transparent 10%, black 80%);
+        }
+        .mask-image-left {
+            -webkit-mask-image: linear-gradient(to left, transparent 10%, black 80%);
+            mask-image: linear-gradient(to left, transparent 10%, black 80%);
+        }
+    </style>
+</head>
+<body class="bg-gray-200 flex items-center justify-center min-h-screen font-sans antialiased text-slate-800" x-data="appData()">
+
+    <div class="relative w-full sm:w-[414px] h-[100dvh] sm:h-[896px] bg-white sm:rounded-[40px] sm:border-[8px] sm:border-slate-800 sm:shadow-2xl overflow-hidden flex flex-col">
+
+        <div class="absolute top-0 w-full h-12 flex items-center justify-between px-6 z-50 pointer-events-none transition-colors duration-300" 
+             :class="isDarkHeader ? 'text-white' : 'text-slate-800'">
+            <span class="text-[13px] font-semibold tracking-tight">9:41</span>
+            <div class="flex items-center space-x-2">
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M2 22h20V2L2 22zm18-2H6.83L20 6.83V20z"/></svg>
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12.01 21.49L23.64 7c-.45-.34-4.93-4-11.64-4C5.28 3 .81 6.66.36 7l11.63 14.49.01.01.01-.01z"/></svg>
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+            </div>
+        </div>
+
+        <div x-show="role === null" x-transition.opacity class="flex-1 bg-brand-light flex flex-col relative w-full h-full tab-content">
+            <div class="absolute top-0 right-0 w-72 h-72 bg-blue-100 rounded-full blur-3xl -translate-y-1/3 translate-x-1/3 opacity-50"></div>
+            
+            <div class="px-6 pt-20 pb-8 flex flex-col items-center h-full">
+                <div class="flex items-center mb-1">
+                    <svg class="w-12 h-12 mr-2 text-brand-blue" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2L2 22h20L12 2zm0 3.8l6.3 12.6H5.7L12 5.8z"/>
+                        <path class="text-brand-yellow" d="M12 10l-3 6h6l-3-6z"/>
+                        <circle cx="6" cy="6" r="1.5" fill="#FFC107"/>
+                    </svg>
+                    <h1 class="text-3xl font-extrabold text-brand-blue tracking-tight">IdeaVest</h1>
+                </div>
+                <p class="text-brand-blue font-medium text-sm mb-10">Bridge Ideas. Build Impact.</p>
+                
+                <h2 class="text-xl font-bold text-center text-slate-800 mb-6">Pilih peran Anda<br>untuk memulai</h2>
+
+                <div class="w-full space-y-4 flex-1">
+                    <button @click="setRole('mahasiswa')" class="w-full relative overflow-hidden bg-brand-blue text-left rounded-[24px] p-6 shadow-card group hover:scale-[1.02] transition-transform">
+                        <div class="relative z-10 w-2/3">
+                            <h3 class="text-xl font-bold text-white mb-2 leading-tight">Mahasiswa /<br>Innovator</h3>
+                            <p class="text-xs text-blue-200 mb-4">Saya ingin menawarkan ide riset dan mencari pendanaan.</p>
+                            <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-brand-blue shadow-md">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                        </div>
+                        <div class="absolute right-0 bottom-0 w-32 h-40">
+                            <img src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80" alt="Student" class="absolute bottom-0 right-[-20px] w-full h-full object-cover mask-image-gradient rounded-tl-[60px]">
+                        </div>
+                    </button>
+
+                    <button @click="setRole('company')" class="w-full relative overflow-hidden bg-white border border-slate-200 text-left rounded-[24px] p-6 shadow-sm group hover:scale-[1.02] transition-transform">
+                        <div class="relative z-10 w-2/3">
+                            <h3 class="text-xl font-bold text-brand-blue mb-2 leading-tight">Company /<br>Industry</h3>
+                            <p class="text-xs text-slate-500 mb-4">Saya mencari inovasi dan talenta unggul untuk perusahaan.</p>
+                            <div class="w-8 h-8 bg-brand-blue rounded-full flex items-center justify-center text-white shadow-md">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                        </div>
+                        <div class="absolute right-4 bottom-4 w-20 h-24 flex items-end justify-end opacity-80">
+                            <svg viewBox="0 0 100 100" class="w-full h-full">
+                                <rect x="20" y="40" width="25" height="60" fill="#94A3B8"/>
+                                <rect x="45" y="20" width="35" height="80" fill="#1A365D"/>
+                                <rect x="55" y="30" width="5" height="5" fill="#60A5FA"/><rect x="65" y="30" width="5" height="5" fill="#60A5FA"/>
+                                <rect x="55" y="45" width="5" height="5" fill="#60A5FA"/><rect x="65" y="45" width="5" height="5" fill="#60A5FA"/>
+                            </svg>
+                        </div>
+                    </button>
+                </div>
+
+                <div class="w-full text-center mt-auto pb-4">
+                    <p class="text-[11px] text-slate-400 mb-4">Masuk atau daftar dengan</p>
+                    <div class="flex justify-center space-x-4 mb-6">
+                        <button class="w-12 h-12 rounded-full border border-slate-200 flex items-center justify-center bg-white shadow-sm hover:bg-slate-50">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                        </button>
+                        <button class="w-12 h-12 rounded-full border border-slate-200 flex items-center justify-center bg-white shadow-sm hover:bg-slate-50">
+                            <svg class="w-5 h-5 text-[#0077b5]" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                        </button>
+                        <button class="w-12 h-12 rounded-full border border-slate-200 flex items-center justify-center bg-white shadow-sm hover:bg-slate-50">
+                            <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        </button>
+                    </div>
+                    <p class="text-[10px] text-slate-400">Dengan melanjutkan, Anda menyetujui<br><a href="#" class="text-brand-blue font-semibold">Syarat & Ketentuan</a> dan <a href="#" class="text-brand-blue font-semibold">Kebijakan Privasi</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="role === 'mahasiswa'" x-cloak class="flex flex-col h-full bg-slate-50 relative">
+            
+            <div class="flex-1 overflow-y-auto hide-scrollbar pb-24 relative" id="scroll-mhs">
+                
+                <div x-show="screenMhs === 'beranda'" class="tab-content">
+                    <div class="bg-brand-blue pt-14 pb-12 px-6 rounded-b-[40px] relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-xl translate-x-1/2 -translate-y-1/2"></div>
+                        <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full blur-lg -translate-x-1/2 translate-y-1/2"></div>
+                        
+                        <div class="flex justify-between items-center relative z-10">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-11 h-11 rounded-full bg-slate-300 border-2 border-white overflow-hidden shadow-md">
+                                    <img src="https://i.pravatar.cc/150?img=11" alt="Ahmad" class="w-full h-full object-cover">
+                                </div>
+                                <div>
+                                    <p class="text-white font-bold text-sm">Halo, Ahmad Nafis!</p>
+                                    <p class="text-blue-200 text-[11px]">Universitas Lambung Mangkurat</p>
+                                </div>
+                            </div>
+                            <div class="relative cursor-pointer">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                                <span class="absolute top-0 right-0 w-2.5 h-2.5 bg-brand-yellow rounded-full ring-2 ring-brand-blue"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="px-5 -mt-6 relative z-20 space-y-6">
+                        
+                        <section>
+                            <div class="flex justify-between items-center mb-3 px-1">
+                                <h3 class="font-bold text-slate-800 text-sm flex items-center">
+                                    <svg class="w-4 h-4 mr-1.5 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                    Smart Match untuk Anda
+                                </h3>
+                                <a href="#" class="text-xs text-brand-blue font-semibold hover:underline">Lihat semua</a>
+                            </div>
+                            
+                            <div class="bg-white rounded-2xl p-5 shadow-card border border-slate-100 relative overflow-hidden">
+                                <div class="absolute right-0 top-0 bottom-0 w-28 bg-gradient-to-l from-green-50 to-transparent flex items-end justify-end">
+                                    <img src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?ixlib=rb-1.2.1&auto=format&fit=crop&w=150&q=80" alt="Plant" class="h-full w-full object-cover object-left opacity-90 mask-image-left">
+                                </div>
+
+                                <div class="relative z-10 w-[70%]">
+                                    <div class="flex items-center space-x-1.5 mb-2">
+                                        <div class="w-5 h-5 bg-green-100 rounded flex items-center justify-center">
+                                            <svg class="w-3 h-3 text-brand-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v11a3 3 0 106 0V4a2 2 0 00-2-2H4zm1 14a1 1 0 100-2 1 1 0 000 2zm5-1.757l4.9-4.9a2 2 0 000-2.828L13.485 5.1a2 2 0 00-2.828 0L10 5.757v8.486zM16 18H9.071l6-6H16a2 2 0 012 2v2a2 2 0 01-2 2z" clip-rule="evenodd"></path></svg>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-slate-500">PT. Agro Inovasi Nusantara</span>
+                                    </div>
+                                    <h4 class="font-extrabold text-slate-800 text-[15px] leading-snug mb-4">Inovasi Teknologi Pengolahan Limbah Organik Menjadi Pupuk Cair</h4>
+                                    
+                                    <div class="space-y-1.5">
+                                        <div class="flex items-center text-[11px] font-medium text-slate-500">
+                                            <svg class="w-3.5 h-3.5 mr-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            Budget: Rp 25.000.000
+                                        </div>
+                                        <div class="flex items-center text-[11px] font-medium text-slate-500">
+                                            <svg class="w-3.5 h-3.5 mr-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            Sisa waktu: 12 hari lagi
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="absolute top-4 right-4 bg-brand-yellow text-slate-900 font-extrabold text-[10px] px-2 py-1 rounded shadow-sm">
+                                    Match 92%
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-center space-x-1.5 mt-4">
+                                <div class="w-5 h-1.5 bg-brand-yellow rounded-full"></div>
+                                <div class="w-1.5 h-1.5 bg-slate-300 rounded-full"></div>
+                                <div class="w-1.5 h-1.5 bg-slate-300 rounded-full"></div>
+                            </div>
+                        </section>
+
+                        <section>
+                            <div class="flex justify-between items-center mb-3 px-1">
+                                <h3 class="font-bold text-slate-800 text-sm flex items-center">
+                                    <span class="mr-1.5 text-lg leading-none">🔥</span>
+                                    Trending Bounties
+                                </h3>
+                                <a href="#" class="text-xs text-brand-blue font-semibold hover:underline">Lihat semua</a>
+                            </div>
+
+                            <div class="space-y-3">
+                                <div class="bg-white rounded-xl p-3.5 shadow-sm border border-slate-100 flex justify-between items-center hover:border-brand-blue transition-colors cursor-pointer">
+                                    <div class="flex-1 pr-3">
+                                        <div class="flex items-center space-x-1.5 mb-1.5">
+                                            <div class="w-5 h-5 rounded bg-blue-50 flex items-center justify-center">
+                                                <img src="https://ui-avatars.com/api/?name=EH&background=eff6ff&color=1d4ed8&rounded=true&size=32" class="w-4 h-4">
+                                            </div>
+                                            <span class="text-[10px] font-bold text-slate-500">PT. Energi Hijau Indonesia</span>
+                                        </div>
+                                        <h4 class="font-bold text-slate-800 text-[13px] leading-tight mb-1.5">Solusi Penyimpanan Energi Terbarukan Skala Mikro</h4>
+                                        <div class="text-[10px] font-medium text-slate-500 flex items-center">
+                                            <svg class="w-3.5 h-3.5 mr-1 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            Budget: Rp 50.000.000
+                                        </div>
+                                    </div>
+                                    <div class="bg-yellow-50 text-yellow-600 border border-yellow-200 text-[9px] font-extrabold px-2 py-1 rounded">
+                                        18 hari lagi
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl p-3.5 shadow-sm border border-slate-100 flex justify-between items-center hover:border-brand-blue transition-colors cursor-pointer">
+                                    <div class="flex-1 pr-3">
+                                        <div class="flex items-center space-x-1.5 mb-1.5">
+                                            <div class="w-5 h-5 rounded bg-purple-50 flex items-center justify-center">
+                                                <img src="https://ui-avatars.com/api/?name=MS&background=faf5ff&color=7e22ce&rounded=true&size=32" class="w-4 h-4">
+                                            </div>
+                                            <span class="text-[10px] font-bold text-slate-500">PT. Medika Solusi</span>
+                                        </div>
+                                        <h4 class="font-bold text-slate-800 text-[13px] leading-tight mb-1.5">Alat Deteksi Dini Penyakit Berbasis AI</h4>
+                                        <div class="text-[10px] font-medium text-slate-500 flex items-center">
+                                            <svg class="w-3.5 h-3.5 mr-1 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            Budget: Rp 30.000.000
+                                        </div>
+                                    </div>
+                                    <div class="bg-yellow-50 text-yellow-600 border border-yellow-200 text-[9px] font-extrabold px-2 py-1 rounded">
+                                        10 hari lagi
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section>
+                            <div class="flex justify-between items-center mb-3 px-1">
+                                <h3 class="font-bold text-slate-800 text-sm">Inspirasi dari Innovator</h3>
+                                <a href="#" class="text-xs text-brand-blue font-semibold hover:underline">Lihat semua</a>
+                            </div>
+                            <div class="flex space-x-3 overflow-x-auto hide-scrollbar pb-2">
+                                <div class="min-w-[130px] h-24 bg-slate-800 rounded-xl relative overflow-hidden shadow-sm">
+                                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" class="w-full h-full object-cover opacity-70">
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <div class="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center bg-black/40 backdrop-blur-sm">
+                                            <svg class="w-4 h-4 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                        </div>
+                                    </div>
+                                    <div class="absolute bottom-2 right-2 bg-black/70 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">1:12</div>
+                                    <div class="absolute bottom-2 left-2 text-white text-[10px] font-bold truncate w-[80px]">Tim Alpha</div>
+                                </div>
+                                <div class="min-w-[130px] h-24 bg-slate-800 rounded-xl relative overflow-hidden shadow-sm">
+                                    <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" class="w-full h-full object-cover opacity-70">
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <div class="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center bg-black/40 backdrop-blur-sm">
+                                            <svg class="w-4 h-4 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                        </div>
+                                    </div>
+                                    <div class="absolute bottom-2 right-2 bg-black/70 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">2:58</div>
+                                </div>
+                                <div class="min-w-[130px] h-24 bg-slate-800 rounded-xl relative overflow-hidden shadow-sm">
+                                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" class="w-full h-full object-cover opacity-70">
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <div class="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center bg-black/40 backdrop-blur-sm">
+                                            <svg class="w-4 h-4 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                        </div>
+                                    </div>
+                                    <div class="absolute bottom-2 right-2 bg-black/70 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">0:45</div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+
+                <div x-show="screenMhs === 'ide_saya'" class="tab-content pt-12 px-5">
+                    <div class="flex justify-between items-center mb-5 mt-2">
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-slate-800">Ide Saya</h2>
+                            <p class="text-xs text-slate-500 font-medium">Kelola dan lacak ide inovasi Anda</p>
+                        </div>
+                        <button class="bg-brand-yellow text-slate-900 text-[11px] font-extrabold px-3 py-2 rounded-xl flex items-center shadow-md hover:bg-brand-yellowHover">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                            Buat Ide
+                        </button>
+                    </div>
+
+                    <div class="flex border-b border-slate-200 mb-5 overflow-x-auto hide-scrollbar text-sm">
+                        <button class="px-4 py-2.5 border-b-2 border-brand-blue text-brand-blue font-bold whitespace-nowrap">Semua</button>
+                        <button class="px-4 py-2.5 text-slate-400 font-semibold whitespace-nowrap">Draf</button>
+                        <button class="px-4 py-2.5 text-slate-400 font-semibold whitespace-nowrap">Dipublikasi</button>
+                        <button class="px-4 py-2.5 text-slate-400 font-semibold whitespace-nowrap">Arsip</button>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-white rounded-[20px] p-5 shadow-sm border border-slate-200">
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="bg-green-100 text-brand-green text-[10px] font-extrabold px-2.5 py-1 rounded-md">Dipublikasi</span>
+                                <span class="text-[10px] text-slate-400 font-medium">Dipublikasikan 3 hari lalu</span>
+                            </div>
+                            <h3 class="font-extrabold text-slate-800 text-[15px] leading-tight mb-3">Sistem Irigasi Pintar Berbasis IoT Untuk Lahan Kering</h3>
+                            <div class="flex justify-between items-center mb-4">
+                                <div class="flex items-center text-[11px] font-semibold text-slate-500">
+                                    <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                    Agrotech
+                                </div>
+                                <span class="text-brand-green font-extrabold text-[11px]">Match 87%</span>
+                            </div>
+                            <div class="flex items-center space-x-5 border-t border-slate-100 pt-3">
+                                <div class="flex items-center text-slate-500 font-medium text-xs"><svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> 152</div>
+                                <div class="flex items-center text-slate-500 font-medium text-xs"><svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg> 24</div>
+                                <div class="flex items-center text-slate-500 font-medium text-xs"><svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg> 8</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-[20px] p-5 shadow-sm border border-slate-200">
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="bg-blue-50 text-brand-blue border border-blue-100 text-[10px] font-extrabold px-2.5 py-1 rounded-md">Under Review</span>
+                                <span class="text-[10px] text-slate-400 font-medium">Diperbarui 1 hari lalu</span>
+                            </div>
+                            <h3 class="font-extrabold text-slate-800 text-[15px] leading-tight mb-3">Bioplastik dari Limbah Kulit Durian</h3>
+                            <div class="flex justify-between items-center mb-4">
+                                <div class="flex items-center text-[11px] font-semibold text-slate-500">
+                                    <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                                    Bioteknologi
+                                </div>
+                                <span class="text-brand-green font-extrabold text-[11px]">Match 74%</span>
+                            </div>
+                            <div class="flex items-center space-x-5 border-t border-slate-100 pt-3">
+                                <div class="flex items-center text-slate-500 font-medium text-xs"><svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> 98</div>
+                                <div class="flex items-center text-slate-500 font-medium text-xs"><svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg> 15</div>
+                                <div class="flex items-center text-slate-500 font-medium text-xs"><svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg> 5</div>
+                            </div>
+                        </div>
+
+                        <div @click="navMhs('pipeline_detail')" class="bg-white rounded-[20px] p-5 shadow-sm border-2 border-brand-yellow cursor-pointer hover:shadow-md transition-shadow relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-1.5 h-full bg-brand-yellow"></div>
+                            
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="bg-yellow-100 text-yellow-700 text-[10px] font-extrabold px-2.5 py-1 rounded-md">NDA Pending</span>
+                                <span class="text-[10px] text-slate-400 font-medium">Diperbarui 2 hari lalu</span>
+                            </div>
+                            <h3 class="font-extrabold text-slate-800 text-[15px] leading-tight mb-3">Aplikasi Monitoring Kualitas Udara Berbasis AI</h3>
+                            <div class="flex justify-between items-center mb-4">
+                                <div class="flex items-center text-[11px] font-semibold text-slate-500">
+                                    <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                    Teknologi Informasi
+                                </div>
+                                <span class="text-brand-green font-extrabold text-[11px]">Match 68%</span>
+                            </div>
+                            <div class="flex items-center space-x-5 border-t border-slate-100 pt-3">
+                                <div class="flex items-center text-slate-500 font-medium text-xs"><svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> 64</div>
+                                <div class="flex items-center text-slate-500 font-medium text-xs"><svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg> 10</div>
+                                <div class="flex items-center text-slate-500 font-medium text-xs"><svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg> 3</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div x-show="screenMhs === 'pipeline_list'" class="tab-content h-full bg-slate-50 flex flex-col">
+                    <div class="bg-brand-blue pt-12 pb-4 px-5 text-white flex items-center justify-between shadow-md z-10 sticky top-0">
+                        <div class="flex items-center">
+                            <button class="mr-3 p-1" @click="navMhsBack()"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg></button>
+                            <h2 class="text-lg font-bold tracking-wide">Pipeline Saya</h2>
+                        </div>
+                        <button class="flex items-center text-xs font-semibold text-blue-200"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg> Semua</button>
+                    </div>
+                    
+                    <div class="p-6">
+                        <p class="text-xs text-slate-500 font-medium mb-8">Lacak progres ide Anda</p>
+                        
+                        <div class="relative pl-6 ml-2 border-l-2 border-slate-200 space-y-10">
+                            
+                            <div class="relative">
+                                <div class="absolute -left-[35px] bg-brand-blue rounded-full h-7 w-7 flex items-center justify-center text-white text-[11px] font-extrabold z-10 ring-4 ring-slate-50 shadow-sm">1</div>
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h4 class="font-extrabold text-slate-800 text-sm">Under Review</h4>
+                                        <p class="text-xs text-slate-500 font-medium mt-1.5 max-w-[200px] leading-relaxed">Ide Anda sedang ditinjau oleh perusahaan.</p>
+                                    </div>
+                                    <span class="text-[11px] font-bold text-slate-400">2 ide</span>
+                                </div>
+                            </div>
+
+                            <div class="relative" @click="navMhs('pipeline_detail')">
+                                <div class="absolute -left-[26px] -top-10 h-10 w-0.5 bg-brand-yellow"></div>
+                                
+                                <div class="absolute -left-[35px] bg-brand-yellow rounded-full h-7 w-7 flex items-center justify-center text-slate-900 text-[11px] font-extrabold z-10 ring-4 ring-slate-50 shadow-md cursor-pointer hover:scale-110 transition-transform">2</div>
+                                <div class="flex justify-between items-start cursor-pointer group">
+                                    <div>
+                                        <h4 class="font-extrabold text-brand-blue text-sm group-hover:text-brand-yellow transition-colors">NDA Pending</h4>
+                                        <p class="text-xs text-slate-600 font-medium mt-1.5 max-w-[200px] leading-relaxed">Perusahaan meminta akses detail ide. Menunggu persetujuan NDA Anda.</p>
+                                    </div>
+                                    <span class="text-[11px] font-extrabold text-brand-yellow">1 ide</span>
+                                </div>
+                            </div>
+
+                            <div class="relative opacity-50">
+                                <div class="absolute -left-[35px] bg-slate-200 rounded-full h-7 w-7 flex items-center justify-center text-slate-500 text-[11px] font-extrabold z-10 ring-4 ring-slate-50">3</div>
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h4 class="font-bold text-slate-500 text-sm">Virtual Interview</h4>
+                                        <p class="text-xs text-slate-400 font-medium mt-1.5 max-w-[200px] leading-relaxed">Jadwal wawancara atau diskusi teknis dengan perusahaan.</p>
+                                    </div>
+                                    <span class="text-[11px] font-bold text-slate-400">0 ide</span>
+                                </div>
+                            </div>
+
+                            <div class="relative opacity-50">
+                                <div class="absolute -left-[35px] bg-slate-200 rounded-full h-7 w-7 flex items-center justify-center text-slate-500 text-[11px] font-extrabold z-10 ring-4 ring-slate-50">4</div>
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h4 class="font-bold text-slate-500 text-sm">Negotiation & Contract</h4>
+                                        <p class="text-xs text-slate-400 font-medium mt-1.5 max-w-[200px] leading-relaxed">Diskusi jenis kontrak dan kesepakatan kerja sama.</p>
+                                    </div>
+                                    <span class="text-[11px] font-bold text-slate-400">0 ide</span>
+                                </div>
+                            </div>
+
+                            <div class="relative opacity-50">
+                                <div class="absolute -left-[35px] bg-brand-green rounded-full h-7 w-7 flex items-center justify-center text-white text-[11px] font-extrabold z-10 ring-4 ring-slate-50">5</div>
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h4 class="font-bold text-brand-green text-sm">Deal Closed / Funded!</h4>
+                                        <p class="text-xs text-slate-400 font-medium mt-1.5 max-w-[200px] leading-relaxed">Selamat! Ide Anda berhasil mendapatkan pendanaan.</p>
+                                    </div>
+                                    <span class="text-[11px] font-bold text-slate-400">0 ide</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div x-show="screenMhs === 'pipeline_detail'" class="tab-content h-full bg-slate-50 flex flex-col absolute inset-0 z-30">
+                    <div class="bg-brand-blue pt-12 pb-4 px-5 text-white flex items-center justify-between shadow-md shrink-0">
+                        <div class="flex items-center">
+                            <button class="mr-3 p-1" @click="navMhsBack()"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg></button>
+                            <h2 class="text-lg font-bold tracking-wide">Detail Pipeline</h2>
+                        </div>
+                        <button><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path></svg></button>
+                    </div>
+
+                    <div class="flex-1 overflow-y-auto p-5 pb-24">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="bg-yellow-100 text-yellow-700 border border-yellow-200 text-[10px] font-extrabold px-3 py-1.5 rounded-md uppercase tracking-wide">NDA Pending</span>
+                            <span class="text-[10px] text-slate-400 font-medium mt-1">Diperbarui 1 hari lalu</span>
+                        </div>
+                        
+                        <h2 class="text-xl font-extrabold text-brand-blue leading-snug mb-4">Bioplastik dari Limbah Kulit Durian</h2>
+                        
+                        <div class="flex items-center space-x-2 mb-6">
+                            <div class="w-7 h-7 bg-green-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-4 h-4 text-brand-green" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v11a3 3 0 106 0V4a2 2 0 00-2-2H4zm1 14a1 1 0 100-2 1 1 0 000 2zm5-1.757l4.9-4.9a2 2 0 000-2.828L13.485 5.1a2 2 0 00-2.828 0L10 5.757v8.486zM16 18H9.071l6-6H16a2 2 0 012 2v2a2 2 0 01-2 2z" clip-rule="evenodd"></path></svg>
+                            </div>
+                            <span class="text-sm font-bold text-slate-700">PT. Hijau Lestari Industri</span>
+                        </div>
+
+                        <div class="bg-white rounded-[20px] p-5 shadow-sm border border-slate-100 mb-6">
+                            <div class="flex justify-between text-[11px] mb-4">
+                                <span class="font-extrabold text-slate-800">Progress Tahap</span>
+                                <span class="text-slate-500 font-semibold">2 dari 5</span>
+                            </div>
+                            <div class="flex items-center justify-between relative px-1">
+                                <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-200 z-0 rounded-full"></div>
+                                <div class="absolute left-0 top-1/2 -translate-y-1/2 w-[25%] h-1 bg-brand-yellow z-0 rounded-full"></div>
+                                
+                                <div class="w-3.5 h-3.5 rounded-full bg-brand-blue ring-[5px] ring-white z-10"></div>
+                                <div class="w-3.5 h-3.5 rounded-full bg-brand-yellow ring-[5px] ring-white z-10 shadow-sm relative">
+                                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[8px] font-bold px-1.5 py-0.5 rounded">NDA</div>
+                                </div>
+                                <div class="w-3.5 h-3.5 rounded-full bg-slate-300 ring-[5px] ring-white z-10"></div>
+                                <div class="w-3.5 h-3.5 rounded-full bg-slate-300 ring-[5px] ring-white z-10"></div>
+                                <div class="w-3.5 h-3.5 rounded-full bg-slate-300 ring-[5px] ring-white z-10"></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-[20px] p-6 shadow-md border border-slate-200">
+                            <h3 class="font-extrabold text-slate-800 text-[15px] mb-2">Permintaan NDA</h3>
+                            <p class="text-xs text-slate-600 font-medium mb-5 leading-relaxed">Perusahaan telah mengirimkan draf NDA untuk mengakses detail ide Anda. Mohon tinjau dokumen sebelum menyetujui.</p>
+                            
+                            <div class="bg-slate-50 rounded-xl p-3 flex items-center mb-5 border border-slate-100">
+                                <img src="https://i.pravatar.cc/150?img=59" class="w-11 h-11 rounded-full mr-3 shadow-sm border border-slate-200" alt="Sender">
+                                <div class="flex-1">
+                                    <p class="text-[10px] text-slate-400 font-semibold mb-0.5">Dikirim oleh</p>
+                                    <p class="font-bold text-slate-800 text-sm">Rizky Pratama</p>
+                                    <p class="text-[10px] text-slate-500 font-medium">R&D Manager, PT. Hijau Lestari Industri</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-6 bg-slate-50/50 p-3 rounded-lg">
+                                <p class="text-[10px] text-slate-400 font-semibold mb-1">Tanggal</p>
+                                <p class="text-xs font-bold text-slate-700 flex items-center">
+                                    <svg class="w-4 h-4 mr-1.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    12 Mei 2026, 10:30
+                                </p>
+                            </div>
+
+                            <div class="space-y-3">
+                                <button class="w-full bg-brand-yellow text-slate-900 font-extrabold py-3.5 rounded-xl shadow-md hover:bg-brand-yellowHover transition-colors text-sm">Tinjau & Setujui NDA</button>
+                                <button class="w-full bg-white border border-slate-300 text-slate-600 font-bold py-3.5 rounded-xl hover:bg-slate-50 transition-colors text-sm shadow-sm">Tolak Permintaan</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="absolute bottom-0 w-full bg-white border-t border-slate-100 px-6 py-3 flex justify-between items-center sm:rounded-b-[30px] shadow-[0_-5px_20px_rgba(0,0,0,0.06)] z-40">
+                <button @click="navMhs('beranda')" class="flex flex-col items-center group w-14">
+                    <div class="p-1.5 rounded-lg transition-colors" :class="activeNavMhs === 'beranda' ? 'text-brand-blue' : 'text-slate-400 group-hover:text-brand-blue'">
+                        <svg class="w-6 h-6" :fill="activeNavMhs === 'beranda' ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    </div>
+                    <span class="text-[10px] font-bold mt-0.5" :class="activeNavMhs === 'beranda' ? 'text-brand-blue' : 'text-slate-400'">Beranda</span>
+                    <div class="w-1.5 h-1.5 rounded-full mt-1" :class="activeNavMhs === 'beranda' ? 'bg-brand-yellow' : 'bg-transparent'"></div>
+                </button>
+                <button @click="navMhs('ide_saya')" class="flex flex-col items-center group w-14">
+                    <div class="p-1.5 rounded-lg transition-colors" :class="activeNavMhs === 'ide_saya' ? 'text-brand-blue' : 'text-slate-400 group-hover:text-brand-blue'">
+                        <svg class="w-6 h-6" :fill="activeNavMhs === 'ide_saya' ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                    </div>
+                    <span class="text-[10px] font-bold mt-0.5" :class="activeNavMhs === 'ide_saya' ? 'text-brand-blue' : 'text-slate-400'">Ide Saya</span>
+                    <div class="w-1.5 h-1.5 rounded-full mt-1" :class="activeNavMhs === 'ide_saya' ? 'bg-brand-yellow' : 'bg-transparent'"></div>
+                </button>
+                <button @click="navMhs('pipeline_list')" class="flex flex-col items-center group w-14">
+                    <div class="p-1.5 rounded-lg transition-colors" :class="['pipeline_list', 'pipeline_detail'].includes(activeNavMhs) ? 'text-brand-blue' : 'text-slate-400 group-hover:text-brand-blue'">
+                        <svg class="w-6 h-6" :fill="['pipeline_list', 'pipeline_detail'].includes(activeNavMhs) ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2-2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    </div>
+                    <span class="text-[10px] font-bold mt-0.5" :class="['pipeline_list', 'pipeline_detail'].includes(activeNavMhs) ? 'text-brand-blue' : 'text-slate-400'">Pipeline</span>
+                    <div class="w-1.5 h-1.5 rounded-full mt-1" :class="['pipeline_list', 'pipeline_detail'].includes(activeNavMhs) ? 'bg-brand-yellow' : 'bg-transparent'"></div>
+                </button>
+                <button class="flex flex-col items-center group relative w-14">
+                    <div class="p-1.5 rounded-lg text-slate-400 group-hover:text-brand-blue transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <span class="text-[10px] font-bold text-slate-400 mt-0.5">Inbox</span>
+                    <div class="w-1 h-1 rounded-full mt-1 bg-transparent"></div>
+                    <span class="absolute top-1 right-3 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
+                </button>
+                <button class="flex flex-col items-center group w-14">
+                    <div class="p-1.5 rounded-lg text-slate-400 group-hover:text-brand-blue transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    </div>
+                    <span class="text-[10px] font-bold text-slate-400 mt-0.5">Profil</span>
+                    <div class="w-1 h-1 rounded-full mt-1 bg-transparent"></div>
+                </button>
+            </div>
+            
+            <div class="absolute bottom-1 w-full flex justify-center z-50 pointer-events-none">
+                <div class="w-32 h-1 bg-slate-900 rounded-full opacity-20"></div>
+            </div>
+        </div>
+
+
+        <div x-show="role === 'company'" x-cloak class="flex flex-col h-full bg-slate-50 relative">
+            
+            <div class="flex-1 overflow-y-auto hide-scrollbar pb-24 relative" id="scroll-comp">
+                
+                <div x-show="screenComp === 'beranda'" class="tab-content">
+                    <div class="bg-brand-blue pt-14 pb-10 px-6 rounded-b-[40px]">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h1 class="text-white text-xl font-extrabold flex items-center tracking-tight">
+                                    <svg class="w-6 h-6 mr-1.5" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 2L2 22h20L12 2zm0 3.8l6.3 12.6H5.7L12 5.8z"/>
+                                        <path class="text-brand-yellow" d="M12 10l-3 6h6l-3-6z"/>
+                                    </svg>
+                                    IdeaVest
+                                </h1>
+                                <p class="text-blue-200 text-xs mt-1 font-medium">Halo, PT Agro Inovasi</p>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <div class="relative cursor-pointer">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                                    <span class="absolute -top-1 -right-1 w-4 h-4 bg-brand-yellow rounded-full text-brand-blue flex items-center justify-center font-extrabold text-[9px]">12</span>
+                                </div>
+                                <div class="w-9 h-9 rounded-full overflow-hidden border-2 border-white shadow-sm">
+                                    <img src="https://i.pravatar.cc/150?img=5" alt="Company" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-[24px] p-6 shadow-floating relative mt-2">
+                            <h3 class="font-extrabold text-slate-800 text-base mb-1">AI Solutions Radar</h3>
+                            <p class="text-[11px] text-slate-500 font-medium mb-5">Ide yang paling relevan untuk industri Anda</p>
+                            
+                            <div class="flex justify-center my-2">
+                                <div class="relative w-36 h-36">
+                                    <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                                        <path class="text-slate-100" stroke-width="4" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                        <path class="text-brand-blue draw-circle" stroke-linecap="round" stroke-width="4" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    </svg>
+                                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                        <span class="text-4xl font-extrabold text-brand-blue tracking-tighter">92%</span>
+                                        <span class="text-[9px] text-slate-500 font-bold uppercase tracking-wide mt-1">Kesesuaian Tinggi</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="px-5 mt-8 space-y-7">
+                        
+                        <section>
+                            <div class="flex justify-between items-center mb-3 px-1">
+                                <h3 class="font-bold text-slate-800 text-sm">Kategori Eksplorasi</h3>
+                                <a href="#" class="text-xs text-brand-blue font-semibold hover:underline">Lihat semua</a>
+                            </div>
+                            <div class="flex space-x-2.5 overflow-x-auto hide-scrollbar pb-1">
+                                <button class="px-5 py-2 bg-brand-blue text-white text-xs font-bold rounded-full whitespace-nowrap shadow-sm">Agrotech</button>
+                                <button class="px-5 py-2 bg-white border border-slate-200 text-slate-600 text-xs font-bold rounded-full whitespace-nowrap shadow-sm hover:border-slate-300">Energi</button>
+                                <button class="px-5 py-2 bg-white border border-slate-200 text-slate-600 text-xs font-bold rounded-full whitespace-nowrap shadow-sm hover:border-slate-300">Health</button>
+                                <button class="px-5 py-2 bg-white border border-slate-200 text-slate-600 text-xs font-bold rounded-full whitespace-nowrap shadow-sm hover:border-slate-300">IT</button>
+                                <button class="px-5 py-2 bg-white border border-slate-200 text-slate-600 text-xs font-bold rounded-full whitespace-nowrap shadow-sm hover:border-slate-300">Lingkungan</button>
+                            </div>
+                        </section>
+
+                        <section>
+                            <div class="flex justify-between items-center mb-4 px-1">
+                                <h3 class="font-bold text-slate-800 text-sm">Rekomendasi Ide untuk Anda</h3>
+                                <button class="flex items-center text-[11px] font-bold text-slate-600 border border-slate-200 px-2.5 py-1.5 rounded-lg bg-white shadow-sm hover:bg-slate-50">
+                                    <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                                    Filter
+                                </button>
+                            </div>
+                            
+                            <div class="space-y-3.5">
+                                <div @click="navComp('watchlist')" class="bg-white rounded-2xl p-3.5 shadow-sm border border-slate-100 flex items-center space-x-3 cursor-pointer hover:border-brand-yellow hover:shadow-md transition-all relative overflow-hidden">
+                                    <div class="w-14 h-14 bg-slate-100 rounded-[12px] overflow-hidden shrink-0 relative shadow-inner">
+                                        <img src="https://i.pravatar.cc/150?img=11" class="w-full h-full object-cover">
+                                        <div class="absolute bottom-0 right-0 bg-brand-green w-3.5 h-3.5 rounded-tl-[10px] border-[2.5px] border-white"></div>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h4 class="font-extrabold text-slate-800 text-[13px] leading-tight mb-1.5">Sistem Irigasi Pintar Berbasis IoT untuk Lahan Kering</h4>
+                                        <p class="text-[10px] text-slate-500 font-semibold mb-0.5">Ahmad Nafis Al Adieb</p>
+                                        <p class="text-[9px] text-slate-400 font-medium mb-1.5">Universitas Lambung Mangkurat</p>
+                                        <span class="text-[9px] font-extrabold text-brand-blue bg-blue-50 border border-blue-100 px-2 py-0.5 rounded">Agrotech</span>
+                                    </div>
+                                    <div class="text-right shrink-0 h-full flex flex-col justify-end pb-1">
+                                        <span class="text-brand-green font-extrabold text-[10px]">Kesesuaian 92%</span>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white rounded-2xl p-3.5 shadow-sm border border-slate-100 flex items-center space-x-3 cursor-pointer hover:border-brand-blue transition-all">
+                                    <div class="w-14 h-14 bg-slate-100 rounded-[12px] overflow-hidden shrink-0 relative shadow-inner">
+                                        <img src="https://i.pravatar.cc/150?img=33" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="flex-1">
+                                        <h4 class="font-extrabold text-slate-800 text-[13px] leading-tight mb-1.5">Bioplastik dari Limbah Kulit Durian</h4>
+                                        <p class="text-[10px] text-slate-500 font-semibold mb-0.5">Muhammad Nabil Rafif Firdaus</p>
+                                        <p class="text-[9px] text-slate-400 font-medium mb-1.5">Universitas Lambung Mangkurat</p>
+                                        <span class="text-[9px] font-extrabold text-purple-700 bg-purple-50 border border-purple-100 px-2 py-0.5 rounded">Bioteknologi</span>
+                                    </div>
+                                    <div class="text-right shrink-0 h-full flex flex-col justify-end pb-1">
+                                        <span class="text-brand-green font-extrabold text-[10px]">Kesesuaian 88%</span>
+                                    </div>
+                                </div>
+                                
+                                 <div class="bg-white rounded-2xl p-3.5 shadow-sm border border-slate-100 flex items-center space-x-3 cursor-pointer hover:border-brand-blue transition-all">
+                                    <div class="w-14 h-14 bg-slate-100 rounded-[12px] overflow-hidden shrink-0 relative shadow-inner">
+                                        <img src="https://i.pravatar.cc/150?img=47" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="flex-1">
+                                        <h4 class="font-extrabold text-slate-800 text-[13px] leading-tight mb-1.5">Aplikasi Monitoring Kualitas Udara Berbasis AI</h4>
+                                        <p class="text-[10px] text-slate-500 font-semibold mb-0.5">Muhammad Iqbal Fauzan</p>
+                                        <p class="text-[9px] text-slate-400 font-medium mb-1.5">Universitas Lambung Mangkurat</p>
+                                        <span class="text-[9px] font-extrabold text-teal-700 bg-teal-50 border border-teal-100 px-2 py-0.5 rounded">Teknologi Informasi</span>
+                                    </div>
+                                    <div class="text-right shrink-0 h-full flex flex-col justify-end pb-1">
+                                        <span class="text-brand-green font-extrabold text-[10px]">Kesesuaian 85%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+
+                <div x-show="screenComp === 'bounty'" class="tab-content h-full bg-slate-50">
+                    <div class="bg-brand-blue pt-12 pb-4 px-5 text-white flex items-center shadow-md relative z-20 sticky top-0">
+                        <button class="mr-3 p-1" @click="navCompBack()"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg></button>
+                        <h2 class="text-lg font-bold tracking-wide">Buat Bounty Baru</h2>
+                    </div>
+                    
+                    <div class="p-6">
+                        <form class="space-y-6">
+                            <div>
+                                <label class="block text-xs font-extrabold text-slate-700 mb-2">Judul Tantangan</label>
+                                <input type="text" value="Inovasi Pengolahan Limbah Sawit Menjadi Bioproduk Bernilai Tinggi" class="w-full border border-slate-300 rounded-xl p-3.5 text-sm text-slate-800 font-bold focus:outline-none focus:ring-2 focus:ring-brand-blue bg-white shadow-sm" />
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-extrabold text-slate-700 mb-2">Deskripsi Masalah</label>
+                                <textarea rows="4" class="w-full border border-slate-300 rounded-xl p-3.5 text-xs text-slate-600 font-medium focus:outline-none focus:ring-2 focus:ring-brand-blue bg-white shadow-sm leading-relaxed">Kami mencari solusi inovatif untuk mengubah limbah sawit (tandan kosong, cangkang, dll) menjadi produk bernilai ekonomi seperti biochar, bioplastik, atau pupuk organik cair.</textarea>
+                                <div class="text-right text-[10px] text-slate-400 font-semibold mt-1">0/500</div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-extrabold text-slate-700 mb-3">Kriteria Solusi yang Diharapkan</label>
+                                <div class="space-y-3">
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="checkbox" checked class="rounded text-brand-blue focus:ring-brand-blue h-5 w-5 border-slate-300">
+                                        <span class="text-xs text-slate-600 font-semibold">Ramah lingkungan & berkelanjutan</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="checkbox" checked class="rounded text-brand-blue focus:ring-brand-blue h-5 w-5 border-slate-300">
+                                        <span class="text-xs text-slate-600 font-semibold">Biaya produksi kompetitif</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="checkbox" checked class="rounded text-brand-blue focus:ring-brand-blue h-5 w-5 border-slate-300">
+                                        <span class="text-xs text-slate-600 font-semibold">Skalabilitas industri</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 cursor-pointer">
+                                        <input type="checkbox" checked class="rounded text-brand-blue focus:ring-brand-blue h-5 w-5 border-slate-300">
+                                        <span class="text-xs text-slate-600 font-semibold">Teknologi siap diimplementasikan</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-extrabold text-slate-700 mb-3">Estimasi Dana Riset</label>
+                                <div class="flex justify-between text-[11px] font-bold text-slate-400 mb-2">
+                                    <span>Rp10.000.000</span>
+                                    <span>Rp50.000.000</span>
+                                </div>
+                                <div class="relative w-full py-6">
+                                    <div class="absolute left-1/2 -translate-x-1/2 -top-2 bg-brand-yellow text-slate-900 font-extrabold text-[11px] px-3 py-1 rounded shadow-md z-20">
+                                        Rp 30.000.000
+                                        <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-brand-yellow rotate-45"></div>
+                                    </div>
+                                    
+                                    <input type="range" min="10" max="50" value="30" class="custom-slider relative z-10 w-full" id="bountySlider">
+                                    
+                                    <div class="absolute top-1/2 left-0 w-1/2 h-1 bg-brand-yellow rounded-full -translate-y-1/2 z-0 pointer-events-none mt-[1px]"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-extrabold text-slate-700 mb-2">Timeline Penyelesaian</label>
+                                <div class="relative">
+                                    <select class="w-full border border-slate-300 rounded-xl p-3.5 text-sm text-slate-800 font-bold appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue shadow-sm">
+                                        <option>6 Bulan</option>
+                                        <option>12 Bulan</option>
+                                        <option>18 Bulan</option>
+                                    </select>
+                                    <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                                        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-extrabold text-slate-700 mb-3">Preferensi Jenis Kontrak</label>
+                                <div class="flex space-x-2.5">
+                                    <button type="button" class="flex-1 bg-brand-yellow text-slate-900 font-extrabold text-[11px] py-3 rounded-xl shadow-md border border-brand-yellow">Akuisisi Paten</button>
+                                    <button type="button" class="flex-1 bg-white border border-slate-200 text-slate-500 font-bold text-[11px] py-3 rounded-xl hover:bg-slate-50 shadow-sm leading-tight">Hak Guna<br>Eksklusif</button>
+                                    <button type="button" class="flex-1 bg-white border border-slate-200 text-slate-500 font-bold text-[11px] py-3 rounded-xl hover:bg-slate-50 shadow-sm leading-tight">Rekrutmen<br>Jalur Riset</button>
+                                </div>
+                            </div>
+
+                            <div class="pt-4 pb-8">
+                                <button type="button" class="w-full bg-brand-blue text-white font-extrabold py-4 rounded-[16px] shadow-lg hover:bg-brand-blueLight transition-colors text-sm tracking-wide">Publikasikan Bounty</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div x-show="screenComp === 'pipeline'" class="tab-content h-full bg-slate-50 flex flex-col">
+                    <div class="bg-brand-blue pt-12 pb-4 px-5 text-white flex items-center shadow-md relative z-20 sticky top-0">
+                        <button class="mr-3 p-1" @click="navCompBack()"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg></button>
+                        <h2 class="text-lg font-bold tracking-wide">Pipeline Investasi</h2>
+                        <button class="ml-auto"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></button>
+                    </div>
+
+                    <div class="flex border-b border-slate-200 overflow-x-auto hide-scrollbar bg-white shadow-sm z-10 sticky top-[72px]">
+                        <button class="px-4 py-3 border-b-[3px] border-brand-blue text-brand-blue font-extrabold text-[11px] whitespace-nowrap">Inbox (28)</button>
+                        <button class="px-4 py-3 text-slate-400 font-bold text-[11px] whitespace-nowrap hover:text-slate-600">NDA Dikirim (8)</button>
+                        <button class="px-4 py-3 text-slate-400 font-bold text-[11px] whitespace-nowrap hover:text-slate-600">Evaluasi (12)</button>
+                        <button class="px-4 py-3 text-slate-400 font-bold text-[11px] whitespace-nowrap hover:text-slate-600">Negosiasi (5)</button>
+                    </div>
+
+                    <div class="p-5 space-y-4">
+                        <div class="bg-white rounded-[20px] p-5 shadow-card border border-slate-200 relative">
+                            <span class="absolute top-4 right-4 bg-green-100 text-brand-green text-[9px] font-extrabold px-2 py-0.5 rounded uppercase">Baru</span>
+                            
+                            <h3 class="font-extrabold text-slate-800 text-[15px] leading-tight mb-3 pr-10">Sistem Irigasi Pintar Berbasis IoT untuk Lahan Kering</h3>
+                            
+                            <div class="flex items-center space-x-3 mb-4">
+                                <img src="https://i.pravatar.cc/150?img=11" class="w-10 h-10 rounded-full border border-slate-200">
+                                <div>
+                                    <p class="text-[11px] font-extrabold text-slate-700">Ahmad Nafis Al Adieb</p>
+                                    <p class="text-[10px] text-slate-500 font-medium">Universitas Lambung Mangkurat</p>
+                                </div>
+                            </div>
+                            
+                            <p class="text-[10px] text-slate-400 font-semibold mb-3">Dikirim: 2 jam lalu</p>
+                            
+                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 mb-4">
+                                <h4 class="text-[11px] font-bold text-slate-700 mb-1">Ringkasan Abstrak</h4>
+                                <p class="text-[11px] text-slate-600 leading-relaxed mb-2">Sistem ini menggunakan sensor kelembaban tanah dan algoritma AI untuk mengoptimalkan distribusi air...</p>
+                                <div class="text-right">
+                                    <span class="text-brand-green font-extrabold text-[10px]">Kesesuaian 92%</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between mb-4 px-1">
+                                <span class="text-[11px] font-bold text-slate-700">Penilaian Panelis</span>
+                                <div class="flex items-center">
+                                    <div class="flex text-brand-yellow mr-1.5">
+                                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                                    </div>
+                                    <span class="text-[11px] font-extrabold text-slate-800">4.8 <span class="text-slate-400 font-medium">(12 penilaian)</span></span>
+                                </div>
+                            </div>
+
+                            <button class="w-full bg-brand-yellow text-slate-900 font-extrabold py-3.5 rounded-xl flex justify-center items-center shadow-md hover:bg-brand-yellowHover transition-colors text-[13px]">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                Generate Integrated NDA
+                            </button>
+                        </div>
+
+                        <div class="bg-white rounded-[20px] p-5 shadow-card border border-slate-200 relative">
+                            <span class="absolute top-4 right-4 text-slate-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg></span>
+                            
+                            <h3 class="font-extrabold text-slate-800 text-[15px] leading-tight mb-3 pr-10">Bioplastik dari Limbah Kulit Durian</h3>
+                            
+                            <div class="flex items-center space-x-3 mb-4">
+                                <img src="https://i.pravatar.cc/150?img=33" class="w-10 h-10 rounded-full border border-slate-200">
+                                <div>
+                                    <p class="text-[11px] font-extrabold text-slate-700">Muhammad Nabil Rafif Firdaus</p>
+                                    <p class="text-[10px] text-slate-500 font-medium">Universitas Lambung Mangkurat</p>
+                                </div>
+                            </div>
+                            
+                            <p class="text-[10px] text-slate-400 font-semibold mb-3">Dikirim: 5 jam lalu</p>
+                            
+                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 mb-4">
+                                <h4 class="text-[11px] font-bold text-slate-700 mb-1">Ringkasan Abstrak</h4>
+                                <p class="text-[11px] text-slate-600 leading-relaxed mb-2">Inovasi bioplastik berbahan dasar selulosa dari kulit durian yang biodegradable dan kuat tarik tinggi...</p>
+                                <div class="text-right">
+                                    <span class="text-brand-green font-extrabold text-[10px]">Kesesuaian 88%</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between mb-4 px-1">
+                                <span class="text-[11px] font-bold text-slate-700">Penilaian Panelis</span>
+                                <div class="flex items-center">
+                                    <div class="flex text-brand-yellow mr-1.5">
+                                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                                    </div>
+                                    <span class="text-[11px] font-extrabold text-slate-800">4.8 <span class="text-slate-400 font-medium">(19 penilaian)</span></span>
+                                </div>
+                            </div>
+
+                            <button class="w-full bg-brand-yellow text-slate-900 font-extrabold py-3.5 rounded-xl flex justify-center items-center shadow-md hover:bg-brand-yellowHover transition-colors text-[13px]">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                Generate Integrated NDA
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div x-show="screenComp === 'analitik'" class="tab-content h-full bg-slate-50">
+                    <div class="bg-brand-blue pt-12 pb-4 px-5 text-white flex items-center shadow-md relative z-20 sticky top-0">
+                        <button class="mr-3 p-1" @click="navCompBack()"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg></button>
+                        <h2 class="text-lg font-bold tracking-wide">Insight & Analitik</h2>
+                    </div>
+                    
+                    <div class="p-5 space-y-6">
+                        
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-[13px] font-extrabold text-slate-700">Periode</span>
+                            <div class="relative bg-white border border-slate-200 rounded-lg shadow-sm text-xs">
+                                <select class="pl-3 pr-8 py-2 appearance-none bg-transparent font-bold text-slate-600 outline-none">
+                                    <option>6 Bulan Terakhir</option>
+                                </select>
+                                <div class="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none">
+                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="font-extrabold text-slate-800 text-[15px] mb-3">Ringkasan Kinerja</h3>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+                                    <p class="text-[10px] text-slate-500 font-semibold mb-2">Total Ide Masuk</p>
+                                    <div class="flex justify-between items-end">
+                                        <span class="text-2xl font-extrabold text-slate-800 leading-none">156</span>
+                                        <span class="text-[9px] font-extrabold text-brand-green flex items-center bg-green-50 px-1.5 py-0.5 rounded"><svg class="w-2.5 h-2.5 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg> 18%</span>
+                                    </div>
+                                </div>
+                                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+                                    <p class="text-[10px] text-slate-500 font-semibold mb-2">Ide dalam Pipeline</p>
+                                    <div class="flex justify-between items-end">
+                                        <span class="text-2xl font-extrabold text-slate-800 leading-none">53</span>
+                                        <span class="text-[9px] font-extrabold text-brand-green flex items-center bg-green-50 px-1.5 py-0.5 rounded"><svg class="w-2.5 h-2.5 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg> 12%</span>
+                                    </div>
+                                </div>
+                                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+                                    <p class="text-[10px] text-slate-500 font-semibold mb-2">Deal Selesai</p>
+                                    <div class="flex justify-between items-end">
+                                        <span class="text-2xl font-extrabold text-slate-800 leading-none">12</span>
+                                        <span class="text-[9px] font-extrabold text-brand-green flex items-center bg-green-50 px-1.5 py-0.5 rounded"><svg class="w-2.5 h-2.5 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg> 9%</span>
+                                    </div>
+                                </div>
+                                <div class="bg-white rounded-2xl p-4 shadow-sm border border-blue-100 bg-blue-50/30">
+                                    <p class="text-[10px] text-brand-blue font-bold mb-2">Total Dana Investasi</p>
+                                    <div class="flex justify-between items-end">
+                                        <span class="text-lg font-extrabold text-brand-blue leading-none">Rp 380 Juta</span>
+                                        <span class="text-[9px] font-extrabold text-brand-green flex items-center bg-white px-1.5 py-0.5 rounded shadow-sm border border-green-100"><svg class="w-2.5 h-2.5 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg> 15%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-[24px] p-5 shadow-card border border-slate-100">
+                            <div class="flex justify-between items-start mb-6">
+                                <div>
+                                    <h3 class="font-extrabold text-slate-800 text-[15px] mb-1">ROI dari Inovasi Kampus</h3>
+                                    <p class="text-[10px] text-slate-500 font-semibold">ROI Saat Ini</p>
+                                </div>
+                                <span class="text-3xl font-black text-brand-blue tracking-tighter">235%</span>
+                            </div>
+                            
+                            <div class="relative w-full h-36">
+                                <div class="absolute left-0 top-0 h-[85%] flex flex-col justify-between text-[9px] text-slate-400 font-bold">
+                                    <span>300%</span>
+                                    <span>200%</span>
+                                    <span>100%</span>
+                                    <span>0%</span>
+                                </div>
+                                
+                                <div class="ml-10 h-[85%] relative border-b-2 border-l-2 border-slate-100">
+                                    <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
+                                        <line x1="0" y1="33.3" x2="100" y2="33.3" stroke="#f1f5f9" stroke-width="1"/>
+                                        <line x1="0" y1="66.6" x2="100" y2="66.6" stroke="#f1f5f9" stroke-width="1"/>
+                                        
+                                        <path d="M0,85 L16,75 L32,85 L48,60 L64,65 L80,25 L100,15" fill="none" stroke="#FFC107" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="chart-path" />
+                                        
+                                        <circle cx="0" cy="85" r="3" fill="#fff" stroke="#FFC107" stroke-width="2"/>
+                                        <circle cx="16" cy="75" r="3" fill="#fff" stroke="#FFC107" stroke-width="2"/>
+                                        <circle cx="32" cy="85" r="3" fill="#fff" stroke="#FFC107" stroke-width="2"/>
+                                        <circle cx="48" cy="60" r="3" fill="#fff" stroke="#FFC107" stroke-width="2"/>
+                                        <circle cx="64" cy="65" r="3" fill="#fff" stroke="#FFC107" stroke-width="2"/>
+                                        <circle cx="80" cy="25" r="3" fill="#fff" stroke="#FFC107" stroke-width="2"/>
+                                        <circle cx="100" cy="15" r="3.5" fill="#1A365D" stroke="#FFC107" stroke-width="2"/>
+                                    </svg>
+                                </div>
+                                
+                                <div class="ml-10 mt-2 flex justify-between text-[9px] text-slate-400 font-bold px-1">
+                                    <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>Mei</span><span>Jun</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-[24px] p-5 shadow-card border border-slate-100">
+                            <h3 class="font-extrabold text-slate-800 text-[15px] mb-4">Escrow Funding Tracker</h3>
+                            
+                            <div class="flex items-center justify-between">
+                                <div class="w-[45%] flex justify-center relative">
+                                    <div class="w-24 h-24 relative">
+                                        <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
+                                            <circle cx="18" cy="18" r="15.915" fill="transparent" stroke="#FFC107" stroke-width="4" />
+                                            <circle cx="18" cy="18" r="15.915" fill="transparent" stroke="#10B981" stroke-width="4" stroke-dasharray="86 14" stroke-dashoffset="0" />
+                                            <circle cx="18" cy="18" r="15.915" fill="transparent" stroke="#1A365D" stroke-width="4" stroke-dasharray="47 53" stroke-dashoffset="0" />
+                                        </svg>
+                                        
+                                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                            <span class="text-[9px] text-slate-500 font-extrabold uppercase">Rp</span>
+                                            <span class="text-[17px] font-black text-slate-800 leading-none my-0.5">380</span>
+                                            <span class="text-[9px] text-slate-500 font-extrabold uppercase">Juta</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="w-[55%] space-y-3 pl-4 border-l border-slate-100">
+                                    <div class="flex items-start text-[10px]">
+                                        <div class="w-2.5 h-2.5 rounded-full bg-brand-blue mr-2 mt-0.5 shrink-0"></div>
+                                        <div><span class="text-slate-500 font-semibold">Dalam Escrow</span><br><strong class="text-slate-800 text-[11px]">Rp 180 Juta (47%)</strong></div>
+                                    </div>
+                                    <div class="flex items-start text-[10px]">
+                                        <div class="w-2.5 h-2.5 rounded-full bg-brand-green mr-2 mt-0.5 shrink-0"></div>
+                                        <div><span class="text-slate-500 font-semibold">Sudah Dicairkan</span><br><strong class="text-slate-800 text-[11px]">Rp 150 Juta (39%)</strong></div>
+                                    </div>
+                                    <div class="flex items-start text-[10px]">
+                                        <div class="w-2.5 h-2.5 rounded-full bg-brand-yellow mr-2 mt-0.5 shrink-0"></div>
+                                        <div><span class="text-slate-500 font-semibold">Sisa Dana</span><br><strong class="text-slate-800 text-[11px]">Rp 50 Juta (14%)</strong></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="w-full bg-white border-2 border-brand-yellow text-slate-800 font-extrabold py-3.5 rounded-xl hover:bg-yellow-50 flex justify-center items-center shadow-sm text-[13px]">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            Download Laporan CSR
+                        </button>
+                    </div>
+                </div>
+
+                <div x-show="screenComp === 'watchlist'" class="tab-content h-full bg-slate-50 flex flex-col absolute inset-0 z-30">
+                    <div class="bg-brand-blue pt-12 pb-4 px-5 text-white flex items-center shadow-md relative z-20 shrink-0">
+                        <button class="mr-3 p-1" @click="navCompBack()"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg></button>
+                        <h2 class="text-lg font-bold tracking-wide">Watchlist</h2>
+                        <span class="ml-auto text-[10px] font-extrabold bg-white/20 px-2 py-1.5 rounded-lg border border-white/30">Smart Contract Builder</span>
+                    </div>
+
+                    <div class="flex-1 overflow-y-auto p-5 pb-24 space-y-6">
+                        
+                        <div class="bg-white rounded-[24px] p-5 shadow-card border border-slate-100 text-center relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-full h-16 bg-gradient-to-b from-blue-50 to-white"></div>
+
+                            <div class="w-20 h-20 mx-auto bg-slate-200 rounded-full overflow-hidden border-4 border-white shadow-md mb-3 relative z-10">
+                                <img src="https://i.pravatar.cc/150?img=11" alt="Student" class="w-full h-full object-cover">
+                            </div>
+                            <h3 class="font-extrabold text-slate-800 text-lg mb-0.5 relative z-10">Ahmad Nafis Al Adieb</h3>
+                            <p class="text-[11px] text-slate-500 font-medium mb-3 relative z-10">Universitas Lambung Mangkurat</p>
+                            
+                            <div class="flex justify-center items-center space-x-2 text-[10px] font-bold text-slate-600 mb-5">
+                                <span class="bg-slate-100 border border-slate-200 px-2.5 py-1 rounded flex items-center"><span class="w-2 h-2 rounded-full bg-brand-blue mr-1.5"></span> Agrotech - IoT - AI</span>
+                                <span class="bg-green-50 text-brand-green border border-green-100 px-2.5 py-1 rounded">IP Score: 93/100</span>
+                            </div>
+
+                            <div class="bg-slate-50 rounded-xl p-4 text-left flex justify-between items-center mb-5 border border-slate-100 shadow-inner">
+                                <div>
+                                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider mb-1">Proyek Unggulan</p>
+                                    <h4 class="font-extrabold text-slate-800 text-[13px] leading-snug">Sistem Irigasi Pintar Berbasis IoT<br>untuk Lahan Kering</h4>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-[9px] text-slate-400 font-bold uppercase mb-1">Pipeline</p>
+                                    <span class="bg-yellow-100 text-yellow-700 text-[10px] font-extrabold px-2 py-1 rounded border border-yellow-200">NDA Dikirim</span>
+                                </div>
+                            </div>
+
+                            <div class="flex space-x-3">
+                                <button class="flex-1 border-2 border-brand-blue text-brand-blue font-extrabold py-3 rounded-xl text-xs hover:bg-blue-50 transition-colors">Lihat Profil Lengkap</button>
+                                <button class="flex-1 bg-brand-yellow text-slate-900 font-extrabold py-3 rounded-xl text-xs shadow-md hover:bg-brand-yellowHover transition-colors">Direct Hire / Kirim Tawaran</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="font-extrabold text-slate-800 text-[15px] mb-4 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                Buat Kontrak Cerdas (MoU)
+                            </h3>
+
+                            <div class="mb-6">
+                                <div class="flex items-center space-x-3 mb-4">
+                                    <div class="w-6 h-6 rounded-full bg-brand-blue text-white text-[11px] font-extrabold flex items-center justify-center shadow-md">1</div>
+                                    <span class="text-[14px] font-extrabold text-slate-800">Pilih Jenis Kontrak</span>
+                                </div>
+                                
+                                <div class="space-y-3 pl-9">
+                                    <label class="flex items-start bg-brand-yellow/10 border-2 border-brand-yellow rounded-[16px] p-4 cursor-pointer relative overflow-hidden shadow-sm">
+                                        <div class="absolute top-0 right-0 w-9 h-9 flex justify-center items-center bg-brand-yellow rounded-bl-[16px]">
+                                            <svg class="w-5 h-5 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                        </div>
+                                        <input type="radio" name="contract" checked class="mt-0.5 mr-3 hidden">
+                                        <div class="w-5 h-5 rounded-full border-4 border-brand-yellow bg-white mt-0.5 mr-3 shrink-0 relative"><div class="absolute inset-0 bg-brand-yellow rounded-full m-[2px]"></div></div>
+                                        
+                                        <div>
+                                            <h4 class="font-extrabold text-slate-800 text-[13px] mb-0.5">IP Acquisition</h4>
+                                            <p class="text-[11px] text-slate-600 font-medium">Perusahaan memiliki paten secara penuh.</p>
+                                        </div>
+                                    </label>
+
+                                    <label class="flex items-start bg-white border border-slate-200 rounded-[16px] p-4 cursor-pointer hover:border-slate-300 shadow-sm transition-colors">
+                                        <input type="radio" name="contract" class="hidden">
+                                        <div class="w-5 h-5 rounded-full border-2 border-slate-300 bg-white mt-0.5 mr-3 shrink-0"></div>
+                                        
+                                        <div>
+                                            <h4 class="font-bold text-slate-700 text-[13px] mb-0.5">Royalty Sharing</h4>
+                                            <p class="text-[11px] text-slate-500 font-medium">Bagi hasil dari komersialisasi produk.</p>
+                                        </div>
+                                    </label>
+                                    
+                                    <label class="flex items-start bg-white border border-slate-200 rounded-[16px] p-4 cursor-pointer hover:border-slate-300 shadow-sm transition-colors">
+                                        <input type="radio" name="contract" class="hidden">
+                                         <div class="w-5 h-5 rounded-full border-2 border-slate-300 bg-white mt-0.5 mr-3 shrink-0"></div>
+                                        
+                                        <div>
+                                            <h4 class="font-bold text-slate-700 text-[13px] mb-0.5">Joint Patent</h4>
+                                            <p class="text-[11px] text-slate-500 font-medium">Paten dimiliki bersama dengan universitas.</p>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex items-center space-x-3 mb-4">
+                                    <div class="w-6 h-6 rounded-full bg-brand-blue text-white text-[11px] font-extrabold flex items-center justify-center shadow-md">2</div>
+                                    <span class="text-[14px] font-extrabold text-slate-800">Atur Parameter Kontrak</span>
+                                </div>
+                                
+                                <div class="pl-9 grid grid-cols-2 gap-4 mb-6">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Estimasi Nilai Kontrak</label>
+                                        <input type="text" value="Rp 50.000.000" class="w-full border border-slate-200 rounded-xl p-3 text-[13px] font-extrabold text-slate-800 bg-white shadow-sm focus:outline-none focus:border-brand-yellow">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Pembayaran</label>
+                                        <div class="relative">
+                                            <select class="w-full border border-slate-200 rounded-xl p-3 text-[13px] font-extrabold text-slate-800 appearance-none bg-white shadow-sm focus:outline-none focus:border-brand-yellow">
+                                                <option>Milestone</option>
+                                                <option>Lumpsum</option>
+                                            </select>
+                                            <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                                                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button class="w-full bg-brand-yellow text-slate-900 font-extrabold py-4 rounded-[16px] shadow-lg hover:bg-brand-yellowHover transition-colors text-sm tracking-wide">Buat Draf MoU Otomatis</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div x-show="screenComp === 'profil'" class="tab-content h-full bg-slate-50 flex flex-col absolute inset-0 z-30">
+                    <div class="bg-brand-blue pt-12 pb-4 px-5 text-white flex items-center shadow-md relative z-20 shrink-0">
+                        <button class="mr-3 p-1" @click="navCompBack()"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg></button>
+                        <h2 class="text-lg font-bold tracking-wide">Profil Perusahaan</h2>
+                    </div>
+
+                    <div class="flex-1 overflow-y-auto p-5 pb-24 space-y-6">
+                        
+                        <div class="bg-white rounded-[24px] p-5 shadow-sm border border-slate-100 flex items-center space-x-4 relative">
+                            <div class="w-16 h-16 rounded-xl border border-slate-200 p-2 shrink-0 bg-white">
+                                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+                                    <path d="M50 90C50 90 20 60 20 30C20 15 35 15 35 30C35 45 50 60 50 60" stroke="#84cc16" stroke-width="8" stroke-linecap="round"/>
+                                    <path d="M50 90C50 90 80 60 80 30C80 15 65 15 65 30C65 45 50 60 50 60" stroke="#84cc16" stroke-width="8" stroke-linecap="round"/>
+                                    <line x1="50" y1="90" x2="50" y2="40" stroke="#4d7c0f" stroke-width="8" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h2 class="text-[17px] font-extrabold text-slate-800 flex items-center mb-1">
+                                    PT Agro Inovasi Nusantara
+                                    <svg class="w-4 h-4 text-blue-500 ml-1.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                </h2>
+                                <p class="text-[10px] text-slate-500 font-medium flex items-center mb-0.5">
+                                    <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                                    Industri Agribisnis & Teknologi Hijau
+                                </p>
+                                <p class="text-[10px] text-slate-500 font-medium flex items-center mb-0.5">
+                                    <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                    Jakarta, Indonesia
+                                </p>
+                                <p class="text-[10px] text-brand-blue font-semibold flex items-center">
+                                    <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                                    www.agroinovasi.co.id
+                                </p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="font-extrabold text-slate-800 text-[14px] mb-2">Tentang Kami</h3>
+                            <p class="text-xs text-slate-600 leading-relaxed font-medium">Kami berkomitmen menghadirkan inovasi berkelanjutan untuk masa depan pertanian Indonesia melalui kolaborasi dengan talenta muda dan riset kampus.</p>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="font-extrabold text-slate-800 text-[14px]">Fokus R&D Kami</h3>
+                                <a href="#" class="text-[11px] text-brand-blue font-bold">Lihat semua</a>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="bg-white border border-slate-200 rounded-xl p-3 flex flex-col items-center text-center shadow-sm">
+                                    <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center mb-2">🌱</div>
+                                    <span class="text-[11px] font-extrabold text-slate-700 leading-tight">Agrotech &<br>Precision Farming</span>
+                                </div>
+                                <div class="bg-white border border-slate-200 rounded-xl p-3 flex flex-col items-center text-center shadow-sm">
+                                    <div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center mb-2">🧪</div>
+                                    <span class="text-[11px] font-extrabold text-slate-700 leading-tight">Bioenergi &<br>Biomaterial</span>
+                                </div>
+                                <div class="bg-white border border-slate-200 rounded-xl p-3 flex flex-col items-center text-center shadow-sm col-span-2">
+                                    <div class="w-8 h-8 rounded-full bg-yellow-50 flex items-center justify-center mb-2">♻️</div>
+                                    <span class="text-[11px] font-extrabold text-slate-700 leading-tight">Pengolahan Limbah Pertanian</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="font-extrabold text-slate-800 text-[14px] mb-3">Pencapaian Bersama Inovator</h3>
+                            <div class="bg-white rounded-[20px] p-5 shadow-sm border border-slate-100 flex justify-between items-center divide-x divide-slate-100 text-center">
+                                <div class="px-2 w-1/3">
+                                    <p class="text-xl font-black text-brand-blue">28+</p>
+                                    <p class="text-[9px] text-slate-500 font-bold uppercase mt-1">Proyek Kolaborasi</p>
+                                </div>
+                                <div class="px-2 w-1/3">
+                                    <p class="text-xl font-black text-brand-blue">12</p>
+                                    <p class="text-[9px] text-slate-500 font-bold uppercase mt-1">Paten Diperoleh</p>
+                                </div>
+                                <div class="px-2 w-1/3">
+                                    <p class="text-xl font-black text-brand-blue">Rp 2.1 M</p>
+                                    <p class="text-[9px] text-slate-500 font-bold uppercase mt-1">Dana Investasi</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="font-extrabold text-slate-800 text-[14px] mb-3">Adakan Innovation Sprint!</h3>
+                            <div class="bg-brand-blue rounded-[24px] p-6 text-white relative overflow-hidden shadow-floating">
+                                <div class="absolute inset-0 opacity-20">
+                                    <div class="w-1 h-1 bg-white rounded-full absolute top-4 left-10"></div>
+                                    <div class="w-1.5 h-1.5 bg-white rounded-full absolute top-10 right-20"></div>
+                                    <div class="w-1 h-1 bg-white rounded-full absolute bottom-10 left-20"></div>
+                                </div>
+                                
+                                <div class="relative z-10 w-[60%]">
+                                    <h4 class="text-[16px] font-black leading-tight mb-2">Virtual Innovation<br>Sprint / Hackathon</h4>
+                                    <p class="text-[10px] text-blue-200 mb-5 leading-relaxed font-medium">Tantang inovator terbaik dalam 48 Jam menciptakan solusi nyata untuk masalah industri Anda.</p>
+                                    <button class="bg-brand-yellow text-slate-900 font-extrabold text-[11px] px-4 py-2.5 rounded-lg shadow-sm hover:bg-brand-yellowHover">Buat Sprint Sekarang</button>
+                                </div>
+
+                                <div class="absolute bottom-0 right-0 w-32 h-32">
+                                     <svg viewBox="0 0 100 100" class="w-full h-full">
+                                        <path d="M70 30 C 70 30, 80 50, 70 70 L 40 70 C 30 50, 40 30, 40 30 Z" fill="#ffffff"/>
+                                        <circle cx="55" cy="50" r="8" fill="#1A365D"/>
+                                        <path d="M40 70 L 30 90 L 55 80 L 80 90 L 70 70 Z" fill="#EF4444"/>
+                                        <path d="M55 20 L 40 30 L 70 30 Z" fill="#EF4444"/>
+                                     </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="absolute bottom-0 w-full bg-brand-blue border-t border-slate-700/50 px-6 py-3 flex justify-between items-center sm:rounded-b-[30px] shadow-[0_-10px_30px_rgba(0,0,0,0.15)] z-40">
+                <button @click="navComp('beranda')" class="flex flex-col items-center group w-14">
+                    <div class="p-1.5 rounded-lg transition-colors" :class="activeNavComp === 'beranda' ? 'text-brand-yellow' : 'text-blue-300 group-hover:text-brand-yellow'">
+                        <svg class="w-6 h-6" :fill="activeNavComp === 'beranda' ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    </div>
+                    <span class="text-[10px] font-bold mt-0.5" :class="activeNavComp === 'beranda' ? 'text-brand-yellow' : 'text-blue-300'">Beranda</span>
+                    <div class="w-1.5 h-1.5 rounded-full mt-1" :class="activeNavComp === 'beranda' ? 'bg-white' : 'bg-transparent'"></div>
+                </button>
+                <button @click="navComp('bounty')" class="flex flex-col items-center group w-14">
+                    <div class="p-1.5 rounded-lg transition-colors" :class="activeNavComp === 'bounty' ? 'text-brand-yellow' : 'text-blue-300 group-hover:text-brand-yellow'">
+                        <svg class="w-6 h-6" :fill="activeNavComp === 'bounty' ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <span class="text-[10px] font-bold mt-0.5" :class="activeNavComp === 'bounty' ? 'text-brand-yellow' : 'text-blue-300'">Bounty</span>
+                    <div class="w-1.5 h-1.5 rounded-full mt-1" :class="activeNavComp === 'bounty' ? 'bg-white' : 'bg-transparent'"></div>
+                </button>
+                <button @click="navComp('pipeline')" class="flex flex-col items-center group relative w-14">
+                    <div class="p-1.5 rounded-lg transition-colors" :class="activeNavComp === 'pipeline' ? 'text-brand-yellow' : 'text-blue-300 group-hover:text-brand-yellow'">
+                        <svg class="w-6 h-6" :fill="activeNavComp === 'pipeline' ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                    </div>
+                    <span class="text-[10px] font-bold mt-0.5" :class="activeNavComp === 'pipeline' ? 'text-brand-yellow' : 'text-blue-300'">Pipeline</span>
+                    <div class="w-1.5 h-1.5 rounded-full mt-1" :class="activeNavComp === 'pipeline' ? 'bg-white' : 'bg-transparent'"></div>
+                </button>
+                <button @click="navComp('analitik')" class="flex flex-col items-center group w-14">
+                    <div class="p-1.5 rounded-lg transition-colors" :class="activeNavComp === 'analitik' ? 'text-brand-yellow' : 'text-blue-300 group-hover:text-brand-yellow'">
+                        <svg class="w-6 h-6" :fill="activeNavComp === 'analitik' ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2-2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    </div>
+                    <span class="text-[10px] font-bold mt-0.5" :class="activeNavComp === 'analitik' ? 'text-brand-yellow' : 'text-blue-300'">Analitik</span>
+                    <div class="w-1.5 h-1.5 rounded-full mt-1" :class="activeNavComp === 'analitik' ? 'bg-white' : 'bg-transparent'"></div>
+                </button>
+                <button @click="navComp('profil')" class="flex flex-col items-center group w-14">
+                    <div class="p-1.5 rounded-lg transition-colors relative" :class="activeNavComp === 'profil' ? 'text-brand-yellow' : 'text-blue-300 group-hover:text-brand-yellow'">
+                        <svg class="w-6 h-6" :fill="activeNavComp === 'profil' ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-brand-yellow rounded-full ring-2 ring-brand-blue" x-show="activeNavComp !== 'profil'"></span>
+                    </div>
+                    <span class="text-[10px] font-bold mt-0.5" :class="activeNavComp === 'profil' ? 'text-brand-yellow' : 'text-blue-300'">Profil</span>
+                    <div class="w-1.5 h-1.5 rounded-full mt-1" :class="activeNavComp === 'profil' ? 'bg-white' : 'bg-transparent'"></div>
+                </button>
+            </div>
+            
+            <div class="absolute bottom-1 w-full flex justify-center z-50 pointer-events-none">
+                <div class="w-32 h-1 bg-white rounded-full opacity-40"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('appData', () => ({
+                role: null, // null, 'mahasiswa', 'company'
+                
+                // Mahasiswa State
+                activeNavMhs: 'beranda', // beranda, ide_saya, pipeline_list
+                screenMhs: 'beranda',    // beranda, ide_saya, pipeline_list, pipeline_detail
+                historyMhs: [],
+                
+                // Company State
+                activeNavComp: 'beranda', // beranda, bounty, pipeline, analitik, profil
+                screenComp: 'beranda',    // beranda, bounty, pipeline, analitik, profil, watchlist
+                historyComp: [],
+
+                // UI Helpers
+                get isDarkHeader() {
+                    if (this.role === null) return false; // landing page is white bg
+                    if (this.role === 'mahasiswa' && this.screenMhs === 'ide_saya') return false; // Ide saya has white bg top
+                    return true; // most headers are dark blue
+                },
+
+                setRole(selectedRole) {
+                    this.role = selectedRole;
+                    if(selectedRole === 'mahasiswa') {
+                        this.activeNavMhs = 'beranda';
+                        this.screenMhs = 'beranda';
+                        this.historyMhs = [];
+                    } else if (selectedRole === 'company') {
+                        this.activeNavComp = 'beranda';
+                        this.screenComp = 'beranda';
+                        this.historyComp = [];
+                    }
+                },
+
+                // Mahasiswa Navigation
+                navMhs(screen) {
+                    // Track history if it's a detail page
+                    if(screen === 'pipeline_detail') {
+                        this.historyMhs.push(this.screenMhs);
+                    } else {
+                        // If it's a main nav tap, clear history and set active nav
+                        this.historyMhs = [];
+                        if(['beranda', 'ide_saya', 'pipeline_list'].includes(screen)) {
+                            this.activeNavMhs = screen;
+                        }
+                    }
+                    this.screenMhs = screen;
+                    this.scrollToTop('scroll-mhs');
+                },
+                
+                navMhsBack() {
+                    if (this.historyMhs.length > 0) {
+                        this.screenMhs = this.historyMhs.pop();
+                    } else {
+                        this.screenMhs = this.activeNavMhs; // fallback
+                    }
+                },
+
+                // Company Navigation
+                navComp(screen) {
+                    if(screen === 'watchlist') {
+                        this.historyComp.push(this.screenComp);
+                    } else {
+                        this.historyComp = [];
+                        if(['beranda', 'bounty', 'pipeline', 'analitik', 'profil'].includes(screen)) {
+                            this.activeNavComp = screen;
+                        }
+                    }
+                    this.screenComp = screen;
+                    this.scrollToTop('scroll-comp');
+                },
+
+                navCompBack() {
+                    if (this.historyComp.length > 0) {
+                        this.screenComp = this.historyComp.pop();
+                    } else {
+                        this.screenComp = this.activeNavComp; // fallback
+                    }
+                },
+
+                scrollToTop(elementId) {
+                    // Small delay to allow Alpine DOM updates
+                    setTimeout(() => {
+                        const el = document.getElementById(elementId);
+                        if (el) el.scrollTo({ top: 0, behavior: 'smooth' });
+                    }, 50);
+                }
+            }));
+        });
+    </script>
+</body>
+</html>
