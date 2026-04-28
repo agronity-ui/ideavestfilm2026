@@ -446,7 +446,7 @@
                                     <span class="mr-1.5 text-lg leading-none">🔥</span>
                                     Trending Bounties
                                 </h3>
-                                <button @click="showToast('Menampilkan semua Trending Bounties', 'info')" class="text-xs text-brand-blue font-semibold hover:underline">Lihat semua</button>
+                                <button @click="navMhs('bounties')" class="text-xs text-brand-blue font-semibold hover:underline">Lihat semua</button>
                             </div>
 
                             <div class="space-y-3">
@@ -613,8 +613,86 @@
                     </div>
                 </div>
 
-                <div x-show="screenMhs === 'pipeline_list'" class="tab-content h-full bg-slate-50 flex flex-col">
-                    <div class="bg-brand-blue pt-12 pb-4 px-5 text-white flex items-center justify-between shadow-md z-10 sticky top-0">
+                <!-- MAHASISWA: INDUSTRY BOUNTIES (Dari Gambar 1) -->
+                <div x-show="screenMhs === 'bounties'" class="tab-content h-full bg-slate-50 flex flex-col absolute inset-0 z-30">
+                    <div class="bg-brand-blue pt-12 pb-4 px-5 text-white flex items-center justify-between shadow-md shrink-0">
+                        <div class="flex items-center">
+                            <button class="mr-3 p-1" @click="navMhsBack()"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg></button>
+                            <h2 class="text-lg font-bold tracking-wide">Bounties</h2>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg></button>
+                            <button><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg></button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white px-5 py-4 shadow-sm z-20">
+                        <div class="flex items-center space-x-2">
+                            <div class="flex-1 bg-slate-100 rounded-xl px-4 py-2.5 flex items-center border border-slate-200">
+                                <svg class="w-4 h-4 text-slate-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                <input type="text" placeholder="Search bounties or companies..." class="bg-transparent text-xs w-full focus:outline-none text-slate-700 font-medium placeholder-slate-400">
+                            </div>
+                            <button class="bg-slate-100 p-2.5 rounded-xl border border-slate-200 text-slate-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg></button>
+                        </div>
+
+                        <div class="flex space-x-5 mt-4 overflow-x-auto hide-scrollbar text-xs border-b border-slate-100 pb-1">
+                            <button class="font-extrabold text-brand-blue border-b-2 border-brand-yellow pb-2 whitespace-nowrap">All</button>
+                            <button class="font-bold text-slate-400 pb-2 whitespace-nowrap hover:text-slate-600">AgriTech</button>
+                            <button class="font-bold text-slate-400 pb-2 whitespace-nowrap hover:text-slate-600">Energy</button>
+                            <button class="font-bold text-slate-400 pb-2 whitespace-nowrap hover:text-slate-600">HealthTech</button>
+                            <button class="font-bold text-slate-400 pb-2 whitespace-nowrap ml-auto"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+                        </div>
+                    </div>
+
+                    <div class="flex-1 overflow-y-auto p-5 pb-24 space-y-4">
+                        <!-- Bounty Pertamina -->
+                        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 relative overflow-hidden group hover:border-brand-blue transition-colors">
+                            <div class="flex items-start justify-between mb-4">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Pertamina_Logo.svg/1200px-Pertamina_Logo.svg.png" alt="Pertamina" class="h-8 object-contain">
+                                <h3 class="font-extrabold text-brand-blue text-[15px] leading-tight text-right w-1/2">Waste Management Innovation Challenge</h3>
+                            </div>
+                            <p class="text-xs text-slate-600 font-medium mb-4 leading-relaxed pr-4">Cari solusi inovatif untuk pengolahan limbah industri menjadi produk bernilai ekonomi tinggi.</p>
+                            
+                            <div class="flex items-center space-x-4 mb-5 text-[11px] font-bold text-slate-700">
+                                <div class="flex items-center"><svg class="w-4 h-4 mr-1.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> Rp 150 Juta</div>
+                                <div class="flex items-center"><svg class="w-4 h-4 mr-1.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 30 Days Left</div>
+                                <div class="ml-auto bg-blue-50 text-brand-blue px-2.5 py-1 rounded-md text-[9px] uppercase tracking-wide">AgriTech</div>
+                            </div>
+
+                            <button @click="showToast('Membuka form pengajuan ide ke Pertamina...', 'info')" class="w-full bg-brand-yellow hover:bg-brand-yellowHover text-slate-900 font-extrabold py-3.5 rounded-xl transition-colors text-sm flex justify-center items-center shadow-md">
+                                Submit Idea
+                                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                            </button>
+                        </div>
+
+                        <!-- Bounty Unilever -->
+                        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 relative overflow-hidden group hover:border-brand-blue transition-colors">
+                            <div class="flex items-start justify-between mb-4">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Unilever.svg/1200px-Unilever.svg.png" alt="Unilever" class="h-10 object-contain">
+                                <h3 class="font-extrabold text-brand-blue text-[15px] leading-tight text-right w-1/2">Sustainable Packaging Solution</h3>
+                            </div>
+                            <p class="text-xs text-slate-600 font-medium mb-4 leading-relaxed pr-4">Inovasi kemasan ramah lingkungan yang dapat didaur ulang dan biodegradable.</p>
+                            
+                            <div class="flex flex-wrap items-center gap-3 mb-5 text-[11px] font-bold text-slate-700">
+                                <div class="flex items-center"><svg class="w-4 h-4 mr-1.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> Rp 100 Juta</div>
+                                <div class="flex items-center"><svg class="w-4 h-4 mr-1.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 25 Days Left</div>
+                                <div class="w-full mt-1 flex space-x-2">
+                                    <div class="bg-green-50 text-brand-green px-2.5 py-1 rounded-md text-[9px] uppercase tracking-wide">Green Tech</div>
+                                    <div class="bg-blue-50 text-brand-blue px-2.5 py-1 rounded-md text-[9px] uppercase tracking-wide">Material Science</div>
+                                </div>
+                            </div>
+
+                            <button @click="showToast('Membuka form pengajuan ide ke Unilever...', 'info')" class="w-full bg-brand-yellow hover:bg-brand-yellowHover text-slate-900 font-extrabold py-3.5 rounded-xl transition-colors text-sm flex justify-center items-center shadow-md">
+                                Submit Idea
+                                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MAHASISWA: PIPELINE SAYA (List) -->
+                <div x-show="screenMhs === 'pipeline_list'" class="tab-content h-full bg-slate-50 flex flex-col absolute inset-0 z-30">
+                    <div class="bg-brand-blue pt-12 pb-4 px-5 text-white flex items-center justify-between shadow-md z-10 shrink-0">
                         <div class="flex items-center">
                             <button class="mr-3 p-1" @click="navMhsBack()"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg></button>
                             <h2 class="text-lg font-bold tracking-wide">Pipeline Saya</h2>
@@ -622,11 +700,12 @@
                         <button class="flex items-center text-xs font-semibold text-blue-200"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg> Semua</button>
                     </div>
                     
-                    <div class="p-6">
+                    <div class="flex-1 overflow-y-auto p-6 pb-24">
                         <p class="text-xs text-slate-500 font-medium mb-8">Lacak progres ide Anda</p>
                         
+                        <!-- Vertical Timeline -->
                         <div class="relative pl-6 ml-2 border-l-2 border-slate-200 space-y-10">
-                            
+                            <!-- Step 1 -->
                             <div class="relative">
                                 <div class="absolute -left-[35px] bg-brand-blue rounded-full h-7 w-7 flex items-center justify-center text-white text-[11px] font-extrabold z-10 ring-4 ring-slate-50 shadow-sm">1</div>
                                 <div class="flex justify-between items-start">
@@ -638,9 +717,9 @@
                                 </div>
                             </div>
 
+                            <!-- Step 2 (Active/Warning) -->
                             <div class="relative" @click="navMhs('pipeline_detail')">
                                 <div class="absolute -left-[26px] -top-10 h-10 w-0.5 bg-brand-yellow"></div>
-                                
                                 <div class="absolute -left-[35px] bg-brand-yellow rounded-full h-7 w-7 flex items-center justify-center text-slate-900 text-[11px] font-extrabold z-10 ring-4 ring-slate-50 shadow-md cursor-pointer hover:scale-110 transition-transform">2</div>
                                 <div class="flex justify-between items-start cursor-pointer group">
                                     <div>
@@ -651,35 +730,25 @@
                                 </div>
                             </div>
 
+                            <!-- Step 3, 4, 5 (Disabled) -->
                             <div class="relative opacity-50">
                                 <div class="absolute -left-[35px] bg-slate-200 rounded-full h-7 w-7 flex items-center justify-center text-slate-500 text-[11px] font-extrabold z-10 ring-4 ring-slate-50">3</div>
                                 <div class="flex justify-between items-start">
-                                    <div>
-                                        <h4 class="font-bold text-slate-500 text-sm">Virtual Interview</h4>
-                                        <p class="text-xs text-slate-400 font-medium mt-1.5 max-w-[200px] leading-relaxed">Jadwal wawancara atau diskusi teknis dengan perusahaan.</p>
-                                    </div>
+                                    <div><h4 class="font-bold text-slate-500 text-sm">Virtual Interview</h4><p class="text-xs text-slate-400 font-medium mt-1.5 max-w-[200px] leading-relaxed">Jadwal wawancara atau diskusi teknis dengan perusahaan.</p></div>
                                     <span class="text-[11px] font-bold text-slate-400">0 ide</span>
                                 </div>
                             </div>
-
                             <div class="relative opacity-50">
                                 <div class="absolute -left-[35px] bg-slate-200 rounded-full h-7 w-7 flex items-center justify-center text-slate-500 text-[11px] font-extrabold z-10 ring-4 ring-slate-50">4</div>
                                 <div class="flex justify-between items-start">
-                                    <div>
-                                        <h4 class="font-bold text-slate-500 text-sm">Negotiation & Contract</h4>
-                                        <p class="text-xs text-slate-400 font-medium mt-1.5 max-w-[200px] leading-relaxed">Diskusi jenis kontrak dan kesepakatan kerja sama.</p>
-                                    </div>
+                                    <div><h4 class="font-bold text-slate-500 text-sm">Negotiation & Contract</h4><p class="text-xs text-slate-400 font-medium mt-1.5 max-w-[200px] leading-relaxed">Diskusi jenis kontrak dan kesepakatan kerja sama.</p></div>
                                     <span class="text-[11px] font-bold text-slate-400">0 ide</span>
                                 </div>
                             </div>
-
                             <div class="relative opacity-50">
                                 <div class="absolute -left-[35px] bg-brand-green rounded-full h-7 w-7 flex items-center justify-center text-white text-[11px] font-extrabold z-10 ring-4 ring-slate-50">5</div>
                                 <div class="flex justify-between items-start">
-                                    <div>
-                                        <h4 class="font-bold text-brand-green text-sm">Deal Closed / Funded!</h4>
-                                        <p class="text-xs text-slate-400 font-medium mt-1.5 max-w-[200px] leading-relaxed">Selamat! Ide Anda berhasil mendapatkan pendanaan.</p>
-                                    </div>
+                                    <div><h4 class="font-bold text-brand-green text-sm">Deal Closed / Funded!</h4><p class="text-xs text-slate-400 font-medium mt-1.5 max-w-[200px] leading-relaxed">Selamat! Ide Anda berhasil mendapatkan pendanaan.</p></div>
                                     <span class="text-[11px] font-bold text-slate-400">0 ide</span>
                                 </div>
                             </div>
@@ -687,6 +756,7 @@
                     </div>
                 </div>
 
+                <!-- MAHASISWA: DETAIL PIPELINE (NDA Pending) -->
                 <div x-show="screenMhs === 'pipeline_detail'" class="tab-content h-full bg-slate-50 flex flex-col absolute inset-0 z-30">
                     <div class="bg-brand-blue pt-12 pb-4 px-5 text-white flex items-center justify-between shadow-md shrink-0">
                         <div class="flex items-center">
@@ -719,7 +789,6 @@
                             <div class="flex items-center justify-between relative px-1">
                                 <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-200 z-0 rounded-full"></div>
                                 <div class="absolute left-0 top-1/2 -translate-y-1/2 w-[25%] h-1 bg-brand-yellow z-0 rounded-full"></div>
-                                
                                 <div class="w-3.5 h-3.5 rounded-full bg-brand-blue ring-[5px] ring-white z-10"></div>
                                 <div class="w-3.5 h-3.5 rounded-full bg-brand-yellow ring-[5px] ring-white z-10 shadow-sm relative">
                                     <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[8px] font-bold px-1.5 py-0.5 rounded">NDA</div>
@@ -752,8 +821,8 @@
                             </div>
 
                             <div class="space-y-3">
-                                <button @click="showToast('Selamat! NDA Berhasil Disetujui secara Digital. 🎉', 'success'); navMhsBack()" class="w-full bg-brand-yellow text-slate-900 font-extrabold py-3.5 rounded-xl shadow-md hover:bg-brand-yellowHover transition-colors text-sm">Tinjau & Setujui NDA</button>
-                                <button @click="showToast('Permintaan NDA ditolak.', 'error'); navMhsBack()" class="w-full bg-white border border-slate-300 text-slate-600 font-bold py-3.5 rounded-xl hover:bg-slate-50 transition-colors text-sm shadow-sm">Tolak Permintaan</button>
+                                <button @click="showToast('NDA Disetujui!', 'success'); navMhs('pipeline_list')" class="w-full bg-brand-yellow text-slate-900 font-extrabold py-3.5 rounded-xl shadow-md hover:bg-brand-yellowHover transition-colors text-sm">Tinjau & Setujui NDA</button>
+                                <button @click="showToast('Permintaan NDA ditolak.', 'error'); navMhs('pipeline_list')" class="w-full bg-white border border-slate-300 text-slate-600 font-bold py-3.5 rounded-xl hover:bg-slate-50 transition-colors text-sm shadow-sm">Tolak Permintaan</button>
                             </div>
                         </div>
                     </div>
@@ -762,7 +831,7 @@
                 <!-- MAHASISWA: INBOX (Notifikasi) -->
                 <div x-show="screenMhs === 'inbox'" class="tab-content h-full bg-brand-blue flex flex-col absolute inset-0 z-30">
                     <div class="pt-12 pb-6 px-5 text-white flex items-center shrink-0">
-                        <button class="mr-3 p-1" @click="navMhs('beranda')"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg></button>
+                        <button class="mr-3 p-1" @click="navMhsBack()"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg></button>
                         <h2 class="text-lg font-bold tracking-wide">Notifikasi</h2>
                     </div>
                     
@@ -776,13 +845,13 @@
                             <div class="flex-1">
                                 <h4 class="font-extrabold text-slate-800 text-[15px] mb-1">Kecocokan Ditemukan!</h4>
                                 <p class="text-xs text-slate-600 font-medium leading-relaxed mb-2">Ide Anda cocok dengan<br><strong class="text-slate-800">PT Agritech Solusi Indonesia</strong><br>Bidang: Agri-Tech</p>
-                                <button @click="navMhs('pipeline_detail')" class="bg-brand-blue text-white text-[11px] font-extrabold px-5 py-2.5 rounded-xl shadow-md hover:bg-brand-blueLight">Lihat Detail</button>
+                                <button class="bg-brand-blue text-white text-[11px] font-extrabold px-5 py-2.5 rounded-xl shadow-md hover:bg-brand-blueLight">Lihat Detail</button>
                             </div>
                         </div>
 
-                        <div class="bg-white rounded-[20px] p-5 shadow-sm border border-slate-100 flex items-start space-x-4 relative z-10 cursor-pointer hover:bg-slate-50" @click="showToast('Membuka halaman info Hibah Riset...', 'info')">
+                        <div class="bg-white rounded-[20px] p-5 shadow-sm border border-slate-100 flex items-start space-x-4 relative z-10">
                             <div class="w-10 h-10 rounded-full bg-blue-100 text-brand-blue flex items-center justify-center shrink-0 mt-1">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.1 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.1 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </div>
                             <div class="flex-1">
                                 <h4 class="font-extrabold text-slate-800 text-[15px] mb-1">Pendanaan Tersedia</h4>
@@ -797,7 +866,7 @@
                             <div class="flex-1">
                                 <h4 class="font-extrabold text-slate-800 text-[15px] mb-1">Undangan Kolaborasi</h4>
                                 <p class="text-xs text-slate-600 font-medium leading-relaxed mb-3">PT Inovasi Nusantara<br>tertarik dengan ide Anda.</p>
-                                <button @click="navMhs('pipeline_list')" class="bg-brand-blue text-white text-[11px] font-extrabold px-5 py-2.5 rounded-xl shadow-md hover:bg-brand-blueLight">Lihat Semua</button>
+                                <button class="bg-brand-blue text-white text-[11px] font-extrabold px-5 py-2.5 rounded-xl shadow-md hover:bg-brand-blueLight">Lihat Semua</button>
                             </div>
                         </div>
                     </div>
@@ -808,8 +877,8 @@
                     <div class="flex-1 overflow-y-auto pb-24">
                         <div class="bg-brand-blue pt-12 pb-20 px-6 rounded-b-[40px] relative">
                             <div class="flex items-center justify-between text-white mb-6">
-                                <button class="p-1" @click="navMhs('beranda')"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg></button>
-                                <button class="p-1" @click="navMhs('settings')"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg></button>
+                                <button class="p-1" @click="navMhsBack()"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg></button>
+                                <button @click="navMhs('settings')" class="p-1"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg></button>
                             </div>
 
                             <div class="flex items-center space-x-4">
@@ -822,29 +891,17 @@
                                         <p class="text-[11px] text-blue-100 flex items-center"><svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg> Institut Pertanian Bogor</p>
                                         <p class="text-[11px] text-blue-100 flex items-center"><svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg> Teknik Pertanian</p>
                                     </div>
-                                    <button @click="showToast('Masuk ke mode Edit Profil...', 'info')" class="flex items-center text-[10px] font-bold border border-white/40 px-3 py-1 rounded-full hover:bg-white/10 transition-colors"><svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg> Edit Profile</button>
+                                    <button @click="navMhs('settings')" class="flex items-center text-[10px] font-bold border border-white/40 px-3 py-1 rounded-full hover:bg-white/10 transition-colors"><svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg> Edit Profile</button>
                                 </div>
                             </div>
                         </div>
 
                         <div class="px-5 -mt-10 relative z-10 mb-6">
                             <div class="bg-white rounded-2xl shadow-card p-4 flex justify-between divide-x divide-slate-100 text-center">
-                                <div class="flex-1">
-                                    <p class="text-xl font-black text-brand-blue leading-none mb-1">8</p>
-                                    <p class="text-[10px] font-bold text-slate-500">Ideas</p>
-                                </div>
-                                <div class="flex-1">
-                                    <p class="text-xl font-black text-brand-blue leading-none mb-1">4</p>
-                                    <p class="text-[10px] font-bold text-slate-500">Matches</p>
-                                </div>
-                                <div class="flex-1">
-                                    <p class="text-xl font-black text-brand-blue leading-none mb-1">2</p>
-                                    <p class="text-[10px] font-bold text-slate-500">In Progress</p>
-                                </div>
-                                <div class="flex-1">
-                                    <p class="text-xl font-black text-brand-blue leading-none mb-1">1</p>
-                                    <p class="text-[10px] font-bold text-slate-500">Deal</p>
-                                </div>
+                                <div class="flex-1"><p class="text-xl font-black text-brand-blue leading-none mb-1">8</p><p class="text-[10px] font-bold text-slate-500">Ideas</p></div>
+                                <div class="flex-1"><p class="text-xl font-black text-brand-blue leading-none mb-1">4</p><p class="text-[10px] font-bold text-slate-500">Matches</p></div>
+                                <div class="flex-1"><p class="text-xl font-black text-brand-blue leading-none mb-1">2</p><p class="text-[10px] font-bold text-slate-500">In Progress</p></div>
+                                <div class="flex-1"><p class="text-xl font-black text-brand-blue leading-none mb-1">1</p><p class="text-[10px] font-bold text-slate-500">Deal</p></div>
                             </div>
                         </div>
 
@@ -891,13 +948,13 @@
                                         <h4 class="font-bold text-slate-800 text-[13px] leading-tight mb-1.5">IoT Monitoring Tanaman Hidroponik</h4>
                                         <span class="text-[9px] font-extrabold text-brand-blue bg-blue-50 border border-blue-100 px-2 py-0.5 rounded">AgriTech</span>
                                     </div>
-                                    <button @click="showToast('Dokumen Private. Membutuhkan NDA.', 'error')" class="shrink-0 pl-3 hover:scale-110 transition-transform">
+                                    <div class="shrink-0 pl-3">
                                         <svg class="w-5 h-5 text-brand-blue" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg>
-                                    </button>
+                                    </div>
                                 </div>
                             </div>
 
-                            <button @click="showToast('Membuka Form Add New Idea...', 'info')" class="w-full mt-4 bg-white border-2 border-brand-blue text-brand-blue font-extrabold py-3.5 rounded-2xl flex items-center justify-center shadow-sm hover:bg-blue-50 transition-colors">
+                            <button class="w-full mt-4 bg-white border-2 border-brand-blue text-brand-blue font-extrabold py-3.5 rounded-2xl flex items-center justify-center shadow-sm hover:bg-blue-50 transition-colors">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
                                 Add New Idea
                             </button>
@@ -1307,9 +1364,9 @@
                                 </div>
                             </div>
 
-                            <button @click="showToast('Dokumen NDA berhasil di-generate secara otomatis dan dikirim ke Innovator.', 'success')" class="w-full bg-brand-yellow text-slate-900 font-extrabold py-3.5 rounded-xl flex justify-center items-center shadow-md hover:bg-brand-yellowHover transition-colors text-[13px]">
+                            <button @click="navComp('idea_detail')" class="w-full bg-brand-yellow text-slate-900 font-extrabold py-3.5 rounded-xl flex justify-center items-center shadow-md hover:bg-brand-yellowHover transition-colors text-[13px]">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                                Generate Integrated NDA
+                                Buka Kunci Akses (Proses NDA)
                             </button>
                         </div>
 
@@ -1355,6 +1412,185 @@
                                 Generate Integrated NDA
                             </button>
                         </div>
+                    </div>
+                </div>
+
+                <!-- COMPANY: INTEGRATED NDA & SECURITY (DETAIL IDEA FLOW) -->
+                <div x-show="screenComp === 'idea_detail'" class="tab-content h-full bg-slate-50 flex flex-col absolute inset-0 z-40">
+                    <div class="bg-brand-blue pt-12 pb-4 px-5 text-white flex items-center justify-between shadow-md relative z-20 shrink-0">
+                        <div class="flex items-center">
+                            <button class="mr-3 p-1" @click="navCompBack()"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg></button>
+                            <h2 class="text-lg font-bold tracking-wide">Detail Inovasi</h2>
+                        </div>
+                        <button><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path></svg></button>
+                    </div>
+
+                    <!-- Latar Belakang Konten (Di-blur jika NDA belum selesai) -->
+                    <div class="flex-1 overflow-y-auto relative">
+                        
+                        <div class="p-6 transition-all duration-500" :class="ndaState !== 'unlocked' ? 'blur-sm pointer-events-none opacity-60 overflow-hidden h-full' : ''">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <p class="text-[11px] text-brand-blue font-extrabold uppercase tracking-wide mb-1">Executive Summary</p>
+                                    <h1 class="text-xl font-black text-slate-800 leading-tight">Smart Irrigation System</h1>
+                                    <p class="text-xs text-slate-500 font-medium mt-1">by <span class="font-bold text-slate-700">Ahmad Nafis Al Adieb</span></p>
+                                </div>
+                                <div class="bg-slate-100 p-2 rounded-full text-slate-500">
+                                    <svg x-show="ndaState !== 'unlocked'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                    <svg x-show="ndaState === 'unlocked'" class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
+                                </div>
+                            </div>
+
+                            <div class="mt-6 space-y-6">
+                                <div>
+                                    <h3 class="font-extrabold text-slate-800 text-sm mb-2 border-b border-slate-200 pb-2">Market Potential</h3>
+                                    <p class="text-xs text-slate-600 leading-relaxed font-medium">Industri irigasi pintar diproyeksikan mencapai $2.1B pada 2028. Target utama kami adalah lahan perkebunan sawit dan pertanian hortikultura di area tropis yang sering mengalami fluktuasi cuaca ekstrem.</p>
+                                </div>
+                                <div>
+                                    <h3 class="font-extrabold text-slate-800 text-sm mb-2 border-b border-slate-200 pb-2">Teknologi Utama (Methodology)</h3>
+                                    <p class="text-xs text-slate-600 leading-relaxed font-medium">Menggunakan ESP32 yang terhubung dengan sensor Capacitive Soil Moisture, dikombinasikan dengan API prakiraan cuaca BMKG. Data diolah dengan algoritma Machine Learning Regresi Linear untuk menentukan durasi penyiraman optimal secara presisi.</p>
+                                </div>
+                                <div>
+                                    <h3 class="font-extrabold text-slate-800 text-sm mb-2 border-b border-slate-200 pb-2">Kebutuhan Dana Pendanaan</h3>
+                                    <p class="text-xs text-slate-600 leading-relaxed font-medium">Total dana yang dibutuhkan adalah Rp 45.000.000 untuk prototyping perangkat keras tahap akhir, lisensi server cloud selama 1 tahun, dan uji lapangan di 3 titik kebun percobaan institusi.</p>
+                                </div>
+                            </div>
+
+                            <!-- Tombol Keputusan (Hanya muncul jika sudah unlock) -->
+                            <div x-show="ndaState === 'unlocked'" x-transition class="mt-10 pt-6 border-t border-slate-200">
+                                <h3 class="font-extrabold text-center text-slate-800 text-sm mb-4">Apakah Anda tertarik mendanai ide ini?</h3>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <button @click="ndaState = 'reject'" class="py-3.5 rounded-xl border border-red-200 bg-red-50 text-red-600 font-extrabold text-sm hover:bg-red-100 transition-colors shadow-sm">Tidak Tertarik</button>
+                                    <button @click="ndaState = 'interview'" class="py-3.5 rounded-xl bg-brand-blue text-white font-extrabold text-sm hover:bg-brand-blueLight transition-colors shadow-md">Sangat Tertarik</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- OVERLAY STATES (Loading, Signing, Reason, Interview) -->
+
+                        <!-- State: Locked / Awal minta NDA -->
+                        <div x-show="ndaState === 'locked'" class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-white/50 backdrop-blur-sm px-6">
+                            <div class="bg-white p-6 rounded-[24px] shadow-2xl text-center max-w-sm w-full border border-slate-100">
+                                <div class="w-16 h-16 bg-blue-50 text-brand-blue rounded-full flex items-center justify-center mx-auto mb-4 ring-4 ring-white shadow-sm">
+                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                </div>
+                                <h3 class="text-lg font-black text-slate-800 mb-2">Dokumen Terkunci</h3>
+                                <p class="text-xs text-slate-500 font-medium mb-6 leading-relaxed">Kirim permintaan NDA untuk melindungi Hak Kekayaan Intelektual mahasiswa sebelum melihat detail riset.</p>
+                                <button @click="requestNDA()" class="w-full bg-brand-yellow text-slate-900 font-extrabold py-3.5 rounded-xl shadow-md hover:bg-brand-yellowHover">Request Full Access & NDA</button>
+                            </div>
+                        </div>
+
+                        <!-- State: Loading 3 Detik (Simulasi Mahasiswa Setuju) -->
+                        <div x-show="ndaState === 'loading'" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-900/40 backdrop-blur-sm px-6">
+                            <div class="bg-white p-6 rounded-[24px] shadow-2xl text-center max-w-sm w-full">
+                                <div class="relative w-16 h-16 mx-auto mb-4">
+                                    <div class="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
+                                    <div class="absolute inset-0 border-4 border-brand-blue rounded-full border-t-transparent animate-spin"></div>
+                                </div>
+                                <h3 class="text-sm font-black text-slate-800 mb-1">Mengirim Permintaan NDA...</h3>
+                                <p class="text-[10px] text-slate-500 font-bold animate-pulse">Menunggu persetujuan mahasiswa (Simulasi 3 Detik)</p>
+                            </div>
+                        </div>
+
+                        <!-- State: Signing NDA -->
+                        <div x-show="ndaState === 'signing'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-900/60 backdrop-blur-md px-4">
+                            
+                            <div class="bg-white rounded-[24px] shadow-2xl max-w-sm w-full overflow-hidden relative">
+                                <!-- Shield Badge -->
+                                <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-14 h-16 bg-brand-blue rounded-b-full flex items-center justify-center border-4 border-white shadow-md z-10">
+                                    <svg class="w-6 h-6 text-white mb-2" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                                </div>
+
+                                <div class="p-6 pt-16">
+                                    <h3 class="text-lg font-black text-center text-slate-800 mb-3">Non-Disclosure Agreement</h3>
+                                    <p class="text-[11px] text-center text-slate-500 font-medium mb-5 leading-relaxed">Sebelum mengakses dokumen lengkap, silakan setujui NDA untuk melindungi Hak Kekayaan Intelektual (HKI) inovator.</p>
+                                    
+                                    <div class="space-y-2.5 mb-6 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                        <div class="flex items-start text-xs font-bold text-slate-700">
+                                            <svg class="w-4 h-4 text-brand-blue mr-2 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                            Dokumen ini bersifat rahasia
+                                        </div>
+                                        <div class="flex items-start text-xs font-bold text-slate-700">
+                                            <svg class="w-4 h-4 text-brand-blue mr-2 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                            Dilarang menyebarkan tanpa izin
+                                        </div>
+                                        <div class="flex items-start text-xs font-bold text-slate-700">
+                                            <svg class="w-4 h-4 text-brand-blue mr-2 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                            Wajib untuk kolaborasi lebih lanjut
+                                        </div>
+                                    </div>
+
+                                    <!-- Signature Area -->
+                                    <div class="mb-4">
+                                        <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider mb-1 px-1">Digital Signature</p>
+                                        <div @click="signNDA()" class="w-full h-24 border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer transition-colors relative" :class="signatureDrawn ? 'border-brand-blue bg-blue-50' : 'border-slate-300 bg-slate-50 hover:bg-slate-100'">
+                                            <span x-show="!signatureDrawn" class="text-xs font-bold text-slate-400">Ketuk untuk Tanda Tangan</span>
+                                            
+                                            <!-- SVG Fake Signature -->
+                                            <svg x-show="signatureDrawn" x-transition class="w-full h-full p-2 text-slate-800 absolute inset-0" viewBox="0 0 200 60" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M 30,40 C 40,20 50,10 60,30 C 70,50 80,40 90,30 M 70,30 C 80,10 90,20 100,40 C 110,60 120,30 130,20 C 140,10 150,40 160,30" stroke-dasharray="200" stroke-dashoffset="200" class="draw-circle"></path>
+                                                <!-- Small underline -->
+                                                <path d="M 40,50 L 150,45" stroke="#FFC107" stroke-width="3"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="text-center mb-6">
+                                        <p class="text-sm font-black text-slate-800 flex items-center justify-center">PT. Agro Solusi Indonesia <svg class="w-4 h-4 ml-1 text-blue-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg></p>
+                                        <p class="text-[9px] text-slate-400 font-semibold mt-1">Dengan tanda tangan, saya menyetujui konsekuensi hukum yang berlaku.</p>
+                                    </div>
+
+                                    <button @click="submitNDA()" class="w-full bg-brand-yellow text-slate-900 font-extrabold py-3.5 rounded-xl shadow-md hover:bg-brand-yellowHover flex items-center justify-center">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
+                                        E-Sign to Unlock Full Paper
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- State: Reject Feedback -->
+                        <div x-show="ndaState === 'reject'" x-transition class="absolute inset-0 z-20 bg-white flex flex-col p-6">
+                            <h3 class="text-xl font-black text-slate-800 mb-2 mt-4">Alasan Penolakan</h3>
+                            <p class="text-xs text-slate-500 font-medium mb-6 leading-relaxed">Berikan alasan Anda tidak tertarik untuk membantu inovator mengevaluasi ide mereka.</p>
+                            
+                            <textarea class="w-full border border-slate-300 rounded-xl p-4 text-sm font-medium text-slate-700 h-32 focus:outline-none focus:ring-2 focus:ring-red-400 mb-6 bg-slate-50" placeholder="Misal: Teknologi belum sesuai dengan roadmap perusahaan kami saat ini..."></textarea>
+                            
+                            <div class="mt-auto flex space-x-3">
+                                <button @click="ndaState = 'unlocked'" class="flex-1 py-3.5 rounded-xl border border-slate-200 text-slate-600 font-extrabold text-sm hover:bg-slate-50">Batal</button>
+                                <button @click="showToast('Feedback berhasil dikirim.', 'success'); navCompBack()" class="flex-1 py-3.5 rounded-xl bg-red-500 text-white font-extrabold text-sm shadow-md hover:bg-red-600">Kirim Feedback</button>
+                            </div>
+                        </div>
+
+                        <!-- State: Schedule Interview -->
+                        <div x-show="ndaState === 'interview'" x-transition class="absolute inset-0 z-20 bg-white flex flex-col p-6">
+                            <h3 class="text-xl font-black text-slate-800 mb-2 mt-4">Ajukan Wawancara</h3>
+                            <p class="text-xs text-slate-500 font-medium mb-6 leading-relaxed">Selamat! Anda tertarik dengan ide ini. Jadwalkan pertemuan dengan Ahmad Nafis untuk diskusi lebih lanjut.</p>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-[11px] font-bold text-slate-500 uppercase mb-2">Tanggal Usulan</label>
+                                    <input type="date" class="w-full border border-slate-300 rounded-xl p-3.5 text-sm font-bold text-slate-700 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-blue">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-bold text-slate-500 uppercase mb-2">Metode Pertemuan</label>
+                                    <select class="w-full border border-slate-300 rounded-xl p-3.5 text-sm font-bold text-slate-700 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-blue">
+                                        <option>Google Meet (Virtual)</option>
+                                        <option>Zoom Meeting (Virtual)</option>
+                                        <option>Offline di Kantor Kami</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-bold text-slate-500 uppercase mb-2">Pesan Singkat</label>
+                                    <textarea class="w-full border border-slate-300 rounded-xl p-3 text-xs font-medium text-slate-700 h-20 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-blue" placeholder="Halo Ahmad, kami sangat tertarik dengan ide Anda..."></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-auto flex space-x-3 pt-6">
+                                <button @click="ndaState = 'unlocked'" class="flex-1 py-3.5 rounded-xl border border-slate-200 text-slate-600 font-extrabold text-sm hover:bg-slate-50">Batal</button>
+                                <button @click="showToast('Undangan wawancara berhasil dikirim! 🚀', 'success'); navCompBack()" class="flex-1 py-3.5 rounded-xl bg-brand-blue text-brand-yellow font-extrabold text-sm shadow-md hover:bg-brand-blueLight">Kirim Undangan</button>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -1780,15 +2016,19 @@
                 
                 // Mahasiswa State
                 activeNavMhs: 'beranda', // beranda, ide_saya, pipeline_list, inbox, profil
-                screenMhs: 'beranda',    // beranda, ide_saya, pipeline_list, pipeline_detail, inbox, profil, settings
+                screenMhs: 'beranda',    // beranda, ide_saya, pipeline_list, pipeline_detail, inbox, profil, settings, bounties
                 historyMhs: [],
                 tabIdeMhs: 'semua', // semua, draf, dipublikasi, arsip
                 
                 // Company State
                 activeNavComp: 'beranda', // beranda, bounty, pipeline, analitik, profil
-                screenComp: 'beranda',    // beranda, bounty, pipeline, analitik, profil, watchlist
+                screenComp: 'beranda',    // beranda, bounty, pipeline, analitik, profil, watchlist, idea_detail
                 historyComp: [],
                 tabPipeComp: 'inbox', // inbox, nda, evaluasi, negosiasi
+
+                // Feature 2: NDA & Security State (Company)
+                ndaState: 'locked', // locked, loading, signing, unlocked, reject, interview
+                signatureDrawn: false,
 
                 // Toast Notification System
                 toast: { show: false, message: '', type: 'success' },
@@ -1858,7 +2098,7 @@
 
                 // Mahasiswa Navigation
                 navMhs(screen) {
-                    if(screen === 'pipeline_detail' || screen === 'settings') {
+                    if(screen === 'pipeline_detail' || screen === 'settings' || screen === 'bounties') {
                         this.historyMhs.push(this.screenMhs);
                     } else {
                         this.historyMhs = [];
@@ -1880,8 +2120,13 @@
 
                 // Company Navigation
                 navComp(screen) {
-                    if(screen === 'watchlist') {
+                    if(screen === 'watchlist' || screen === 'idea_detail') {
                         this.historyComp.push(this.screenComp);
+                        // Reset state jika buka halaman detail baru
+                        if(screen === 'idea_detail') {
+                            this.ndaState = 'locked';
+                            this.signatureDrawn = false;
+                        }
                     } else {
                         this.historyComp = [];
                         if(['beranda', 'bounty', 'pipeline', 'analitik', 'profil'].includes(screen)) {
@@ -1890,6 +2135,29 @@
                     }
                     this.screenComp = screen;
                     this.scrollToTop('scroll-comp');
+                },
+
+                // Logic Simulasi Tanda Tangan NDA
+                requestNDA() {
+                    this.ndaState = 'loading';
+                    // Simulasi loading 3 detik persetujuan mahasiswa
+                    setTimeout(() => {
+                        this.showToast('Mahasiswa telah menyetujui akses. Silakan E-Sign.', 'success');
+                        this.ndaState = 'signing';
+                    }, 3000);
+                },
+
+                signNDA() {
+                    this.signatureDrawn = true;
+                },
+
+                submitNDA() {
+                    if(!this.signatureDrawn) {
+                        this.showToast('Tanda tangan digital diwajibkan!', 'error');
+                        return;
+                    }
+                    this.showToast('NDA Disetujui secara legal. Dokumen terbuka.', 'success');
+                    this.ndaState = 'unlocked';
                 },
 
                 navCompBack() {
